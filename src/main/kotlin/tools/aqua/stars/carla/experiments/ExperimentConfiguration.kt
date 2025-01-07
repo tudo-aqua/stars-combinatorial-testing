@@ -36,7 +36,11 @@ import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_NORMAL
 import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_NO_RESULTS
 import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_UNEQUAL_RESULTS
 import tools.aqua.stars.carla.experiments.tsc.tsc
-import tools.aqua.stars.carla.experiments.tsc.tscLayer1Flat
+import tools.aqua.stars.carla.experiments.tsc.tscLayer124Flat
+import tools.aqua.stars.carla.experiments.tsc.tscLayer12Flat
+import tools.aqua.stars.carla.experiments.tsc.tscLayer45Flat
+import tools.aqua.stars.carla.experiments.tsc.tscLayer4Flat
+import tools.aqua.stars.carla.experiments.tsc.tscLayerPedestrianFlat
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metric.metrics.evaluation.*
 import tools.aqua.stars.core.metric.metrics.postEvaluation.*
@@ -150,25 +154,26 @@ class ExperimentConfiguration : CliktCommand() {
           }
     }
 
-    val tscLayer4Flat = tscLayer1Flat()
+    val tscLayer4Flat = tscLayer4Flat()
     println("Calculation of tscLayer4Flat complete")
     println("Got ${tscLayer4Flat.possibleTSCInstances.size} possible instances")
 
-    val tscLayer12Flat = tscLayer1Flat()
+    val tscLayer12Flat = tscLayer12Flat()
     println("Calculation of tscLayer12Flat complete")
     println("Got ${tscLayer12Flat.possibleTSCInstances.size} possible instances")
 
-    val tscLayer45Flat = tscLayer1Flat()
+    val tscLayer45Flat = tscLayer45Flat()
     println("Calculation of tscLayer45Flat complete")
     println("Got ${tscLayer45Flat.possibleTSCInstances.size} possible instances")
 
-    val tscLayer124Flat = tscLayer1Flat()
+    val tscLayer124Flat = tscLayer124Flat()
     println("Calculation of tscLayer124Flat complete")
     println("Got ${tscLayer124Flat.possibleTSCInstances.size} possible instances")
 
-    val tscLayerPedestrianFlat = tscLayer1Flat()
+    val tscLayerPedestrianFlat = tscLayerPedestrianFlat()
     println("Calculation of tscLayerPedestrianFlat complete")
     println("Got ${tscLayerPedestrianFlat.possibleTSCInstances.size} possible instances")
+
     val tsc = tsc()
 
     println("Projections:")

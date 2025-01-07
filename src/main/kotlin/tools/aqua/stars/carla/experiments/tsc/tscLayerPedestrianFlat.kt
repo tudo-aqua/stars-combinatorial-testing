@@ -39,7 +39,7 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer1Flat() =
+fun tscLayerPedestrianFlat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
       optional("TSCRoot") {
         leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
