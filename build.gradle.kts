@@ -131,6 +131,9 @@ val reproductionTestAll by
               "--showMemoryConsumption")
     }
 
-application { mainClass.set("tools.aqua.stars.carla.experiments.Experiment") }
+application {
+  mainClass.set("tools.aqua.stars.carla.experiments.Experiment")
+  applicationDefaultJvmArgs = listOf("-Xmx12g", "-Xms2g")
+}
 
 kotlin { jvmToolchain(17) }
