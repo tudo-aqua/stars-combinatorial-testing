@@ -150,9 +150,25 @@ class ExperimentConfiguration : CliktCommand() {
           }
     }
 
-    val tscLayer1Flat = tscLayer1Flat()
-    println("Calculation of TSC Layer 1 Flat complete")
-    println("Got ${tscLayer1Flat.possibleTSCInstances.size} possible instances")
+    val tscLayer4Flat = tscLayer1Flat()
+    println("Calculation of tscLayer4Flat complete")
+    println("Got ${tscLayer4Flat.possibleTSCInstances.size} possible instances")
+
+    val tscLayer12Flat = tscLayer1Flat()
+    println("Calculation of tscLayer12Flat complete")
+    println("Got ${tscLayer12Flat.possibleTSCInstances.size} possible instances")
+
+    val tscLayer45Flat = tscLayer1Flat()
+    println("Calculation of tscLayer45Flat complete")
+    println("Got ${tscLayer45Flat.possibleTSCInstances.size} possible instances")
+
+    val tscLayer124Flat = tscLayer1Flat()
+    println("Calculation of tscLayer124Flat complete")
+    println("Got ${tscLayer124Flat.possibleTSCInstances.size} possible instances")
+
+    val tscLayerPedestrianFlat = tscLayer1Flat()
+    println("Calculation of tscLayerPedestrianFlat complete")
+    println("Got ${tscLayerPedestrianFlat.possibleTSCInstances.size} possible instances")
     val tsc = tsc()
 
     println("Projections:")
