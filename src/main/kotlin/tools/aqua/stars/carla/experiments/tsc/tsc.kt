@@ -15,8 +15,39 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments
+package tools.aqua.stars.carla.experiments.tsc
 
+import tools.aqua.stars.carla.experiments.changedLane
+import tools.aqua.stars.carla.experiments.didCrossRedLight
+import tools.aqua.stars.carla.experiments.follows
+import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
+import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
+import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
+import tools.aqua.stars.carla.experiments.hasOvertaken
+import tools.aqua.stars.carla.experiments.hasRelevantRedLight
+import tools.aqua.stars.carla.experiments.hasStopSign
+import tools.aqua.stars.carla.experiments.hasYieldSign
+import tools.aqua.stars.carla.experiments.hasYielded
+import tools.aqua.stars.carla.experiments.isInJunction
+import tools.aqua.stars.carla.experiments.isOnMultiLane
+import tools.aqua.stars.carla.experiments.isOnSingleLane
+import tools.aqua.stars.carla.experiments.makesLeftTurn
+import tools.aqua.stars.carla.experiments.makesNoTurn
+import tools.aqua.stars.carla.experiments.makesRightTurn
+import tools.aqua.stars.carla.experiments.mustYield
+import tools.aqua.stars.carla.experiments.noRightOvertaking
+import tools.aqua.stars.carla.experiments.noon
+import tools.aqua.stars.carla.experiments.oncoming
+import tools.aqua.stars.carla.experiments.pedestrianCrossed
+import tools.aqua.stars.carla.experiments.stopAtEnd
+import tools.aqua.stars.carla.experiments.sunset
+import tools.aqua.stars.carla.experiments.weatherClear
+import tools.aqua.stars.carla.experiments.weatherCloudy
+import tools.aqua.stars.carla.experiments.weatherHardRain
+import tools.aqua.stars.carla.experiments.weatherMidRain
+import tools.aqua.stars.carla.experiments.weatherSoftRain
+import tools.aqua.stars.carla.experiments.weatherWet
+import tools.aqua.stars.carla.experiments.weatherWetCloudy
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -127,7 +158,7 @@ fun tsc() =
                 projectionRecursive(LAYER_1_2_4)
               }
 
-              leaf("Lane Follow") { condition { ctx -> makesNoTurn.holds(ctx) } }
+              leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
               leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
               leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
             }
