@@ -35,6 +35,8 @@ import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_EQUAL_RESULTS
 import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_NORMAL
 import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_NO_RESULTS
 import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_UNEQUAL_RESULTS
+import tools.aqua.stars.carla.experiments.tsc.tsc
+import tools.aqua.stars.carla.experiments.tsc.tscLayer1Flat
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metric.metrics.evaluation.*
 import tools.aqua.stars.core.metric.metrics.postEvaluation.*
@@ -148,6 +150,9 @@ class ExperimentConfiguration : CliktCommand() {
           }
     }
 
+    val tscLayer1Flat = tscLayer1Flat()
+    println("Calculation of TSC Layer 1 Flat complete")
+    println("Got ${tscLayer1Flat.possibleTSCInstances.size} possible instances")
     val tsc = tsc()
 
     println("Projections:")
