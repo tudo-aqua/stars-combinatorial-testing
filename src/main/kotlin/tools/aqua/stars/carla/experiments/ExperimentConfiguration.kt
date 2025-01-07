@@ -47,6 +47,7 @@ import tools.aqua.stars.core.metric.metrics.evaluation.*
 import tools.aqua.stars.core.metric.metrics.postEvaluation.*
 import tools.aqua.stars.core.metric.utils.ApplicationConstantsHolder
 import tools.aqua.stars.core.metric.utils.ApplicationConstantsHolder.baselineDirectory
+import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.data.av.dataclasses.*
 import tools.aqua.stars.data.av.metrics.AverageVehiclesInEgosBlockMetric
 import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
@@ -155,8 +156,6 @@ class ExperimentConfiguration : CliktCommand() {
           }
     }
 
-    val tscLayerFullFlat = tscLayerFullFlat()
-
     val tscLayer4Flat = tscLayer4Flat()
     println("Calculation of tscLayer4Flat complete")
     println("Got ${tscLayer4Flat.possibleTSCInstances.size} possible instances")
@@ -170,6 +169,7 @@ class ExperimentConfiguration : CliktCommand() {
     println("Got ${tscLayer45Flat.possibleTSCInstances.size} possible instances")
 
     val tscLayer124Flat = tscLayer124Flat()
+    val tscLayerFullFlat = tscLayerFullFlat()
     println("Calculation of tscLayer124Flat complete")
     println("Got ${tscLayer124Flat.possibleTSCInstances.size} possible instances")
 
@@ -181,8 +181,20 @@ class ExperimentConfiguration : CliktCommand() {
 
     val tsc = tsc()
 
+    val tscs =
+        mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>(
+            tscLayerFullFlat,
+            tscLayer4Flat,
+            tscLayer12Flat,
+            tscLayer45Flat,
+            tscLayer124Flat,
+            tscLayerPedestrianFlat)
+    tsc.buildProjections(projectionIgnoreList).forEach(){
+      tscs.add(it)
+    }
+
     println("Projections:")
-    tsc.buildProjections(projectionIgnoreList.map { it.trim() }).forEach {
+    tsc.buildProjections(projectionIgnoreList).forEach {
       println("TSC for Projection $it:")
       println(tsc)
       println("All possible instances:")
@@ -210,7 +222,7 @@ class ExperimentConfiguration : CliktCommand() {
     println("Creating TSC...")
     val evaluation =
         TSCEvaluation(
-                tscList = tsc().buildProjections(projectionIgnoreList = projectionIgnoreList),
+                tscList = tscs,
                 writePlots = writePlots,
                 writePlotDataCSV = writePlotDataCSV,
                 writeSerializedResults = writeSerializedResults,

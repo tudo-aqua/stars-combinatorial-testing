@@ -39,19 +39,20 @@ import tools.aqua.stars.data.av.dataclasses.*
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayer45Flat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      optional("TSCRoot") {
-        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-        leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
-        leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
-        leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
-        leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
-        leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
-        leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
-        leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
-        leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
-        leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
-        leaf("Sunset") { condition { ctx -> ctx.sunset() } }
-        leaf("Noon") { condition { ctx -> ctx.noon() } }
-      }
-    }
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "Layer 4+5 Flat") {
+          optional("TSCRoot") {
+            leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
+            leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
+            leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
+            leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
+            leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
+            leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
+            leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
+            leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
+            leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
+            leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+            leaf("Sunset") { condition { ctx -> ctx.sunset() } }
+            leaf("Noon") { condition { ctx -> ctx.noon() } }
+          }
+        }

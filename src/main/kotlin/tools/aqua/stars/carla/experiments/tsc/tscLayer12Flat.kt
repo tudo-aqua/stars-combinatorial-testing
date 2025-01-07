@@ -37,28 +37,29 @@ import tools.aqua.stars.data.av.dataclasses.*
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayer12Flat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      optional("TSCRoot") {
-        leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
-        leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
-        leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
-        leaf("Multi-Lane") {
-          condition { ctx ->
-            isOnMultiLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "Layer 1+2 Flat") {
+          optional("TSCRoot") {
+            leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
+            leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
+            leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
+            leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
+            leaf("Multi-Lane") {
+              condition { ctx ->
+                isOnMultiLane.holds(
+                    ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+              }
+            }
+            leaf("Lane Change") { condition { ctx -> changedLane.holds(ctx) } }
+            leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
+            leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
+            leaf("Single-Lane") {
+              condition { ctx ->
+                isOnSingleLane.holds(
+                    ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+              }
+            }
+            leaf("Has Stop Sign") { condition { ctx -> hasStopSign.holds(ctx) } }
+            leaf("Has Yield Sign") { condition { ctx -> hasYieldSign.holds(ctx) } }
           }
         }
-        leaf("Lane Change") { condition { ctx -> changedLane.holds(ctx) } }
-        leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
-        leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
-        leaf("Single-Lane") {
-          condition { ctx ->
-            isOnSingleLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
-          }
-        }
-        leaf("Has Stop Sign") { condition { ctx -> hasStopSign.holds(ctx) } }
-        leaf("Has Yield Sign") { condition { ctx -> hasYieldSign.holds(ctx) } }
-      }
-    }

@@ -38,7 +38,7 @@ import tools.aqua.stars.data.av.dataclasses.*
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayer4Flat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("Layer 4 Flat") {
       optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
