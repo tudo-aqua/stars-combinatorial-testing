@@ -40,6 +40,7 @@ import tools.aqua.stars.carla.experiments.tsc.tscLayer124Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer12Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer45Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer4Flat
+import tools.aqua.stars.carla.experiments.tsc.tscLayerFullFlat
 import tools.aqua.stars.carla.experiments.tsc.tscLayerPedestrianFlat
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metric.metrics.evaluation.*
@@ -154,6 +155,8 @@ class ExperimentConfiguration : CliktCommand() {
           }
     }
 
+    val tscLayerFullFlat = tscLayerFullFlat()
+
     val tscLayer4Flat = tscLayer4Flat()
     println("Calculation of tscLayer4Flat complete")
     println("Got ${tscLayer4Flat.possibleTSCInstances.size} possible instances")
@@ -173,6 +176,8 @@ class ExperimentConfiguration : CliktCommand() {
     val tscLayerPedestrianFlat = tscLayerPedestrianFlat()
     println("Calculation of tscLayerPedestrianFlat complete")
     println("Got ${tscLayerPedestrianFlat.possibleTSCInstances.size} possible instances")
+    println("Calculation of tscLayerFullFlat complete")
+    println("Got ${tscLayerFullFlat.possibleTSCInstances.size} possible instances")
 
     val tsc = tsc()
 
