@@ -26,16 +26,19 @@ group = "tools.aqua"
 
 version = "0.5"
 
-repositories { mavenCentral() }
+repositories {
+  mavenCentral()
+  mavenLocal()
+}
 
 // var starsVersion = "0.5"
 
 dependencies {
   testImplementation(kotlin("test"))
-  implementation(group = "tools.aqua", name = "stars-core")
-  implementation(group = "tools.aqua", name = "stars-logic-kcmftbl")
-  implementation(group = "tools.aqua", name = "stars-data-av")
-  implementation(group = "tools.aqua", name = "stars-importer-carla")
+  implementation(group = "tools.aqua", name = "stars-core", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(group = "tools.aqua", name = "stars-logic-kcmftbl", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(group = "tools.aqua", name = "stars-data-av", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(group = "tools.aqua", name = "stars-importer-carla", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
   implementation(group = "com.github.ajalt.clikt", name = "clikt", version = "4.4.0")
   detektPlugins(
       group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version = "1.23.6")
@@ -133,7 +136,7 @@ val reproductionTestAll by
 
 application {
   mainClass.set("tools.aqua.stars.carla.experiments.Experiment")
-  applicationDefaultJvmArgs = listOf("-Xmx12g", "-Xms2g")
+  applicationDefaultJvmArgs = listOf("-Xmx400g", "-Xms2g")
 }
 
 kotlin { jvmToolchain(17) }
