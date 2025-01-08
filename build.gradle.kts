@@ -37,20 +37,16 @@ dependencies {
   testImplementation(kotlin("test"))
   implementation(
       group = "tools.aqua",
-      name = "stars-core",
-      version = "0.5-combinatorial-testing-13-03c86ee-SNAPSHOT")
+      name = "stars-core",)
   implementation(
       group = "tools.aqua",
-      name = "stars-logic-kcmftbl",
-      version = "0.5-combinatorial-testing-13-03c86ee-SNAPSHOT")
+      name = "stars-logic-kcmftbl",)
   implementation(
       group = "tools.aqua",
-      name = "stars-data-av",
-      version = "0.5-combinatorial-testing-13-03c86ee-SNAPSHOT")
+      name = "stars-data-av",)
   implementation(
       group = "tools.aqua",
-      name = "stars-importer-carla",
-      version = "0.5-combinatorial-testing-13-03c86ee-SNAPSHOT")
+      name = "stars-importer-carla",)
   implementation(group = "com.github.ajalt.clikt", name = "clikt", version = "4.4.0")
   detektPlugins(
       group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version = "1.23.6")
@@ -148,7 +144,7 @@ val reproductionTestAll by
 
 application {
   mainClass.set("tools.aqua.stars.carla.experiments.Experiment")
-  applicationDefaultJvmArgs = listOf("-Xmx400g", "-Xms2g")
+  applicationDefaultJvmArgs = listOf("-Xmx40g", "-Xms2g")
 }
 
 kotlin { jvmToolchain(17) }
