@@ -35,10 +35,22 @@ repositories {
 
 dependencies {
   testImplementation(kotlin("test"))
-  implementation(group = "tools.aqua", name = "stars-core", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
-  implementation(group = "tools.aqua", name = "stars-logic-kcmftbl", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
-  implementation(group = "tools.aqua", name = "stars-data-av", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
-  implementation(group = "tools.aqua", name = "stars-importer-carla", version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(
+      group = "tools.aqua",
+      name = "stars-core",
+      version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(
+      group = "tools.aqua",
+      name = "stars-logic-kcmftbl",
+      version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(
+      group = "tools.aqua",
+      name = "stars-data-av",
+      version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
+  implementation(
+      group = "tools.aqua",
+      name = "stars-importer-carla",
+      version = "0.5-triggering-conditions-17-4544bb9-SNAPSHOT")
   implementation(group = "com.github.ajalt.clikt", name = "clikt", version = "4.4.0")
   detektPlugins(
       group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version = "1.23.6")

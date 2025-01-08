@@ -182,16 +182,15 @@ class ExperimentConfiguration : CliktCommand() {
     val tsc = tsc()
 
     val tscs =
-        mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>(
+        mutableListOf<
+            TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>(
             tscLayerFullFlat,
             tscLayer4Flat,
             tscLayer12Flat,
             tscLayer45Flat,
             tscLayer124Flat,
             tscLayerPedestrianFlat)
-    tsc.buildProjections(projectionIgnoreList).forEach(){
-      tscs.add(it)
-    }
+    tsc.buildProjections(projectionIgnoreList).forEach() { tscs.add(it) }
 
     println("Projections:")
     tsc.buildProjections(projectionIgnoreList).forEach {
