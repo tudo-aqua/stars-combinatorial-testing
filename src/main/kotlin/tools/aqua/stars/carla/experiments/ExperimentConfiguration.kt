@@ -60,147 +60,44 @@ import tools.aqua.stars.importer.carla.loadSegments
 class ExperimentConfiguration : CliktCommand() {
 
   // region command line options
-  private val simulationRunFolder: String by
-      option("--input", help = "Directory of the input files")
-          .default("./stars-reproduction-source/stars-experiments-data/simulation_runs")
-
   private val allEgo: Boolean by
       option("--allEgo", help = "Whether to treat all vehicles as ego").flag(default = false)
 
-  private val minSegmentTickCount: Int by
-      option("--minSegmentTicks", help = "Minimum ticks per segment").int().default(11)
-
-  private val sortBySeed: Boolean by
-      option("--sorted", help = "Whether to sort data by seed").flag(default = true)
-
-  private val dynamicFilter: String by
-      option("--dynamicFilter", help = "Regex to filter on dynamic data").default(".*")
-
-  private val staticFilter: String by
-      option("--staticFilter", help = "Regex to filter on static data").default(".*")
-
-  private val projectionIgnoreList: List<String> by
-      option(
-              "--ignore",
-              help =
-                  "A list of TSC projections that should be ignored (given as a String, separated by ',')")
-          .split(",")
-          .default(listOf())
-
   private val writePlots: Boolean by
-      option("--writePlots", help = "Whether to write plots").flag(default = false)
+      option("--writePlots", help = "Whether to write plots").flag(default = true)
 
   private val writePlotDataCSV: Boolean by
       option("--writePlotData", help = "Whether to write plot data to csv").flag(default = false)
 
   private val writeSerializedResults: Boolean by
       option("--saveResults", help = "Whether to save serialized results").flag(default = false)
-
-  private val compareToBaselineResults: Boolean by
-      option(
-              "--compareToBaselineResults",
-              help = "Whether to compare the results to the baseline results")
-          .flag(default = false)
-
-  private val compareToPreviousRun: Boolean by
-      option("--compare", help = "Whether to compare the results to the previous run")
-          .flag(default = false)
-
-  private val showMemoryConsumption: Boolean by
-      option("--showMemoryConsumption", help = "Whether to show memory consumption")
-          .flag(default = false)
-
-  private val reproduction: String? by option("--reproduction", help = "Path to baseline results")
   // endregion
 
   override fun run() {
     ApplicationConstantsHolder.executionCommand =
         """
-        --input=$simulationRunFolder
         --allEgo=$allEgo
-        --minSegmentTicks=$minSegmentTickCount
-        --sorted=$sortBySeed
-        --dynamicFilter=$dynamicFilter
-        --staticFilter=$staticFilter
-        --ignore=$projectionIgnoreList
         --writePlots=$writePlots
         --writePlotData=$writePlotDataCSV
         --saveResults=$writeSerializedResults
-        --compareToBaselineResults=$compareToBaselineResults
-        --compare=$compareToPreviousRun
-        --reproduction=$reproduction
-        --showMemoryConsumption=$showMemoryConsumption
     """
             .trimIndent()
     println("Executing with the following settings:")
     println(ApplicationConstantsHolder.executionCommand)
 
-    reproduction?.let { baselineDirectory = it }
-
     downloadAndUnzipExperimentsData()
 
-    if (showMemoryConsumption) {
-      Thread {
-            while (true) {
-              val runtime = Runtime.getRuntime()
-              val usedMemory = runtime.totalMemory() - runtime.freeMemory()
-              val freeMemory = runtime.freeMemory()
-              println(
-                  "Used Memory: ${usedMemory / (1024 * 1024)} MB          Free Memory: ${freeMemory / (1024 * 1024)} MB")
-              Thread.sleep(5000)
-            }
-          }
-          .apply {
-            isDaemon = true
-            start()
-          }
-    }
-
-    val tscLayer4Flat = tscLayer4Flat()
-    println("Calculation of tscLayer4Flat complete")
-    println("Got ${tscLayer4Flat.possibleTSCInstances.size} possible instances")
-
-    val tscLayer12Flat = tscLayer12Flat()
-    println("Calculation of tscLayer12Flat complete")
-    println("Got ${tscLayer12Flat.possibleTSCInstances.size} possible instances")
-
-    val tscLayer45Flat = tscLayer45Flat()
-    println("Calculation of tscLayer45Flat complete")
-    println("Got ${tscLayer45Flat.possibleTSCInstances.size} possible instances")
-
-    val tscLayer124Flat = tscLayer124Flat()
-    val tscLayerFullFlat = tscLayerFullFlat()
-    println("Calculation of tscLayer124Flat complete")
-    println("Got ${tscLayer124Flat.possibleTSCInstances.size} possible instances")
-
-    val tscLayerPedestrianFlat = tscLayerPedestrianFlat()
-    println("Calculation of tscLayerPedestrianFlat complete")
-    println("Got ${tscLayerPedestrianFlat.possibleTSCInstances.size} possible instances")
-    println("Calculation of tscLayerFullFlat complete")
-    println("Got ${tscLayerFullFlat.possibleTSCInstances.size} possible instances")
-
-    val tsc = tsc()
-
     val tscs =
-        mutableListOf<
-            TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>(
-            tscLayerFullFlat,
-            tscLayer4Flat,
-            tscLayer12Flat,
-            tscLayer45Flat,
-            tscLayer124Flat,
-            tscLayerPedestrianFlat)
-    tsc.buildProjections(projectionIgnoreList).forEach() { tscs.add(it) }
+        mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
-    println("Projections:")
-    tsc.buildProjections(projectionIgnoreList).forEach {
-      println("TSC for Projection $it:")
-      println(tsc)
-      println("All possible instances:")
-      println(it.possibleTSCInstances.size)
-      println()
-    }
-    println("-----------------")
+    tscs.addAll(tsc().buildProjections().also{ it.forEach { t ->  println("Size of ${t.identifier} flat: ${t.possibleTSCInstances}") }})
+    tscs.addAll(listOf(
+          tscLayer12Flat().also{ println("Size of 1+2 flat: ${it.possibleTSCInstances}") },
+          tscLayer124Flat().also{ println("Size of 1+2+4 flat: ${it.possibleTSCInstances}") },
+          tscLayer4Flat().also{ println("Size of 4 flat: ${it.possibleTSCInstances}") },
+          tscLayer45Flat().also{ println("Size of 4+5 flat: ${it.possibleTSCInstances}") },
+          tscLayerPedestrianFlat().also{ println("Size of Pedestrian flat: ${it.possibleTSCInstances}") },
+          tscLayerFullFlat().also{ println("Size of Full flat: ${it.possibleTSCInstances}") }))
 
     println("Loading simulation runs...")
     val simulationRunsWrappers = getSimulationRuns()
@@ -209,51 +106,20 @@ class ExperimentConfiguration : CliktCommand() {
     val segments =
         loadSegments(
             useEveryVehicleAsEgo = allEgo,
-            minSegmentTickCount = minSegmentTickCount,
-            orderFilesBySeed = sortBySeed,
+            minSegmentTickCount = 11,
+            orderFilesBySeed = true,
             simulationRunsWrappers = simulationRunsWrappers,
         )
 
-    val validTSCInstancesPerProjectionMetric =
-        ValidTSCInstancesPerTSCMetric<
-            Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>()
-
-    println("Creating TSC...")
-    val evaluation =
-        TSCEvaluation(
+    TSCEvaluation(
                 tscList = tscs,
                 writePlots = writePlots,
                 writePlotDataCSV = writePlotDataCSV,
-                writeSerializedResults = writeSerializedResults,
-                compareToBaselineResults = compareToBaselineResults || reproduction != null,
-                compareToPreviousRun = compareToPreviousRun)
+                writeSerializedResults = writeSerializedResults)
             .apply {
-              registerMetricProviders(
-                  TotalSegmentTickDifferencePerIdentifierMetric(),
-                  SegmentCountMetric(),
-                  AverageVehiclesInEgosBlockMetric(),
-                  TotalSegmentTickDifferenceMetric(),
-                  validTSCInstancesPerProjectionMetric,
-                  InvalidTSCInstancesPerTSCMetric(),
-                  MissedTSCInstancesPerTSCMetric(),
-                  MissedPredicateCombinationsPerTSCMetric(validTSCInstancesPerProjectionMetric),
-                  FailedMonitorsMetric(validTSCInstancesPerProjectionMetric),
-              )
-              println("Run Evaluation")
+              registerMetricProviders(ValidTSCInstancesPerTSCMetric<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>())
               runEvaluation(segments = segments)
             }
-
-    exitProcess(
-        status =
-            if (reproduction != null) {
-              when (evaluation.resultsReproducedFromBaseline) {
-                null -> EXIT_CODE_NO_RESULTS
-                false -> EXIT_CODE_UNEQUAL_RESULTS
-                true -> EXIT_CODE_EQUAL_RESULTS
-              }
-            } else {
-              EXIT_CODE_NORMAL
-            })
   }
 
   /**
@@ -290,23 +156,21 @@ class ExperimentConfiguration : CliktCommand() {
   }
 
   private fun getSimulationRuns(): List<CarlaSimulationRunsWrapper> =
-      File(simulationRunFolder).let { file ->
+      File("./stars-reproduction-source/stars-experiments-data/simulation_runs").let { file ->
         file
             .walk()
             .filter {
-              it.isDirectory && it != file && staticFilter.toRegex().containsMatchIn(it.name)
+              it.isDirectory && it != file
             }
             .toList()
             .mapNotNull { mapFolder ->
               var staticFile: Path? = null
               val dynamicFiles = mutableListOf<Path>()
               mapFolder.walk().forEach { mapFile ->
-                if (mapFile.nameWithoutExtension.contains("static_data") &&
-                    staticFilter.toRegex().containsMatchIn(mapFile.name)) {
+                if (mapFile.nameWithoutExtension.contains("static_data")) {
                   staticFile = mapFile.toPath()
                 }
-                if (mapFile.nameWithoutExtension.contains("dynamic_data") &&
-                    dynamicFilter.toRegex().containsMatchIn(mapFile.name)) {
+                if (mapFile.nameWithoutExtension.contains("dynamic_data")) {
                   dynamicFiles.add(mapFile.toPath())
                 }
               }

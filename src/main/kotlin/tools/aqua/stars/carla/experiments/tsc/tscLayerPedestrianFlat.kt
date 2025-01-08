@@ -51,17 +51,21 @@ fun tscLayerPedestrianFlat() =
             leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
             leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
             leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-            leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
+            leaf("Pedestrian Crossed in Junction") { condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) } }
+            leaf("Pedestrian Crossed on Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) } }
+            leaf("Pedestrian Crossed on Single-Lane") { condition { ctx ->
+              isOnSingleLane.holds(ctx) &&
+                  pedestrianCrossed.holds(ctx) } }
             leaf("Multi-Lane") {
               condition { ctx ->
                 isOnMultiLane.holds(
-                    ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                    ctx)
               }
             }
             leaf("Single-Lane") {
               condition { ctx ->
                 isOnSingleLane.holds(
-                    ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                    ctx)
               }
             }
             leaf("Sunset") { condition { ctx -> ctx.sunset() } }
