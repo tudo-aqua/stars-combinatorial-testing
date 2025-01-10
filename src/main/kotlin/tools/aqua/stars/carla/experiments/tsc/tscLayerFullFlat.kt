@@ -55,7 +55,7 @@ import tools.aqua.stars.data.av.dataclasses.*
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayerFullFlat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("Full Flat") {
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("$FULL_TSC Flat") {
       optional("TSCRoot") {
         leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
         leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }

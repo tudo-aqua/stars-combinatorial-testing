@@ -38,7 +38,7 @@ import tools.aqua.stars.data.av.dataclasses.*
 @Suppress("StringLiteralDuplication")
 fun tscLayer12Flat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "Layer 1+2 Flat") {
+        "$LAYER_1_2 Flat") {
           optional("TSCRoot") {
             leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
             leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
@@ -64,9 +64,11 @@ fun tscLayer12Flat() =
                 isOnSingleLane.holds(ctx)
               }
             }
-            leaf("Has Stop Sign") { condition { ctx -> isOnSingleLane.holds(
-              ctx) } }
+            leaf("Has Stop Sign") {
+              condition { ctx -> isOnSingleLane.holds(
+                ctx) && hasStopSign.holds(ctx) }
+            }
             leaf("Has Yield Sign") { condition { ctx -> isOnSingleLane.holds(
-              ctx) } }
+              ctx) && hasYieldSign.holds(ctx) } }
           }
         }

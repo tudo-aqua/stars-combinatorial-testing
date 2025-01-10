@@ -40,7 +40,7 @@ import tools.aqua.stars.data.av.dataclasses.*
 @Suppress("StringLiteralDuplication")
 fun tscLayer45Flat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "Layer 4+5 Flat") {
+        "$LAYER_4_5 Flat") {
           optional("TSCRoot") {
             leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
             leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }

@@ -41,7 +41,7 @@ import tools.aqua.stars.data.av.dataclasses.*
 @Suppress("StringLiteralDuplication")
 fun tscLayerPedestrianFlat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "Pedestrian Flat") {
+        "$LAYER_PEDESTRIAN Flat") {
           optional("TSCRoot") {
             leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
             leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }

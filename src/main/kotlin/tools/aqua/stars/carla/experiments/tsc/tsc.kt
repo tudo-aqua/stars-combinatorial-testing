@@ -52,13 +52,12 @@ import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
 
-private const val FULL_TSC = "full TSC"
-private const val LAYER_1_2 = "layer 1+2"
-private const val LAYER_4 = "layer 4"
-private const val LAYER_1_2_4 = "layer 1+2+4"
-private const val LAYER_4_5 = "layer (4)+5"
-private const val LAYER_PEDESTRIAN = "pedestrian"
-private const val LAYER_MULTI_LANE_DYNAMIC_RELATIONS = "multi-lane-dynamic-relations"
+const val FULL_TSC = "Full TSC"
+const val LAYER_1_2 = "Layer 1+2"
+const val LAYER_4 = "Layer 4"
+const val LAYER_1_2_4 = "Layer 1+2+4"
+const val LAYER_4_5 = "Layer (4)+5"
+const val LAYER_PEDESTRIAN = "Pedestrian"
 
 /**
  * Returns the [TSC] with the dataclasses [Actor], [TickData], [Segment], [TickDataUnitSeconds], and
@@ -75,7 +74,6 @@ fun tsc() =
           projection(LAYER_1_2_4) // static + dynamic
           projection(LAYER_4_5) // environment
           projection(LAYER_PEDESTRIAN) // pedestrian
-          projection(LAYER_MULTI_LANE_DYNAMIC_RELATIONS)
         }
 
         exclusive("Weather") {
@@ -99,7 +97,6 @@ fun tsc() =
             projection(LAYER_4)
             projection(LAYER_1_2_4)
             projection(LAYER_PEDESTRIAN)
-            projection(LAYER_MULTI_LANE_DYNAMIC_RELATIONS)
           }
 
           all("Junction") {
@@ -169,7 +166,6 @@ fun tsc() =
               projection(LAYER_1_2)
               projection(LAYER_4)
               projection(LAYER_1_2_4)
-              projection(LAYER_MULTI_LANE_DYNAMIC_RELATIONS)
             }
 
             condition { ctx ->
@@ -182,7 +178,6 @@ fun tsc() =
                 projection(LAYER_PEDESTRIAN)
                 projectionRecursive(LAYER_4)
                 projectionRecursive(LAYER_1_2_4)
-                projectionRecursive(LAYER_MULTI_LANE_DYNAMIC_RELATIONS)
               }
               leaf("Oncoming traffic") {
                 condition { ctx ->
