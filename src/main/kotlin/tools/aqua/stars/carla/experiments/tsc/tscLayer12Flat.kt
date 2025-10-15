@@ -19,8 +19,6 @@ package tools.aqua.stars.carla.experiments.tsc
 
 import tools.aqua.stars.carla.experiments.changedLane
 import tools.aqua.stars.carla.experiments.hasRelevantRedLight
-import tools.aqua.stars.carla.experiments.hasStopSign
-import tools.aqua.stars.carla.experiments.hasYieldSign
 import tools.aqua.stars.carla.experiments.isInJunction
 import tools.aqua.stars.carla.experiments.isOnMultiLane
 import tools.aqua.stars.carla.experiments.isOnSingleLane
@@ -37,36 +35,31 @@ import tools.aqua.stars.data.av.dataclasses.*
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayer12Flat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "Layer 1+2 Flat") {
-          optional("TSCRoot") {
-            leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-            leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
-            leaf("Right Turn") { condition { ctx -> isInJunction.holds(ctx) && makesRightTurn.holds(ctx) } }
-            leaf("Left Turn") { condition { ctx -> isInJunction.holds(ctx) && makesLeftTurn.holds(ctx) } }
-            leaf("Multi-Lane") {
-              condition { ctx ->
-                isOnMultiLane.holds(ctx)
-              }
-            }
-            leaf("Lane Change") { condition { ctx -> isOnMultiLane.holds(
-              ctx) && changedLane.holds(ctx) } }
-            leaf("Lane Follow") { condition { ctx -> isOnMultiLane.holds(
-              ctx) && !changedLane.holds(ctx) } }
-            leaf("Has Red Light") { condition { ctx ->
-              (
-                  isOnMultiLane.holds(ctx) ||
-                      isOnSingleLane.holds(ctx)
-                  ) && hasRelevantRedLight.holds(ctx)
-            } }
-            leaf("Single-Lane") {
-              condition { ctx ->
-                isOnSingleLane.holds(ctx)
-              }
-            }
-            leaf("Has Stop Sign") { condition { ctx -> isOnSingleLane.holds(
-              ctx) } }
-            leaf("Has Yield Sign") { condition { ctx -> isOnSingleLane.holds(
-              ctx) } }
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+      optional("TSCRoot") {
+        leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
+        leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
+        leaf("Right Turn") {
+          condition { ctx -> isInJunction.holds(ctx) && makesRightTurn.holds(ctx) }
+        }
+        leaf("Left Turn") {
+          condition { ctx -> isInJunction.holds(ctx) && makesLeftTurn.holds(ctx) }
+        }
+        leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
+        leaf("Lane Change") {
+          condition { ctx -> isOnMultiLane.holds(ctx) && changedLane.holds(ctx) }
+        }
+        leaf("Lane Follow") {
+          condition { ctx -> isOnMultiLane.holds(ctx) && !changedLane.holds(ctx) }
+        }
+        leaf("Has Red Light") {
+          condition { ctx ->
+            (isOnMultiLane.holds(ctx) || isOnSingleLane.holds(ctx)) &&
+                hasRelevantRedLight.holds(ctx)
           }
         }
+        leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+        leaf("Has Stop Sign") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+        leaf("Has Yield Sign") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+      }
+    }

@@ -40,35 +40,28 @@ import tools.aqua.stars.data.av.dataclasses.*
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayerPedestrianFlat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "Pedestrian Flat") {
-          optional("TSCRoot") {
-            leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-            leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
-            leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
-            leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
-            leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
-            leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
-            leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
-            leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-            leaf("Pedestrian Crossed in Junction") { condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) } }
-            leaf("Pedestrian Crossed on Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) } }
-            leaf("Pedestrian Crossed on Single-Lane") { condition { ctx ->
-              isOnSingleLane.holds(ctx) &&
-                  pedestrianCrossed.holds(ctx) } }
-            leaf("Multi-Lane") {
-              condition { ctx ->
-                isOnMultiLane.holds(
-                    ctx)
-              }
-            }
-            leaf("Single-Lane") {
-              condition { ctx ->
-                isOnSingleLane.holds(
-                    ctx)
-              }
-            }
-            leaf("Sunset") { condition { ctx -> ctx.sunset() } }
-            leaf("Noon") { condition { ctx -> ctx.noon() } }
-          }
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+      optional("TSCRoot") {
+        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
+        leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
+        leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
+        leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
+        leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
+        leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
+        leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
+        leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
+        leaf("Pedestrian Crossed in Junction") {
+          condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
         }
+        leaf("Pedestrian Crossed on Multi-Lane") {
+          condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
+        }
+        leaf("Pedestrian Crossed on Single-Lane") {
+          condition { ctx -> isOnSingleLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
+        }
+        leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
+        leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+        leaf("Sunset") { condition { ctx -> ctx.sunset() } }
+        leaf("Noon") { condition { ctx -> ctx.noon() } }
+      }
+    }

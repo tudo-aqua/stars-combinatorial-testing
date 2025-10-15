@@ -18,11 +18,8 @@
 package tools.aqua.stars.carla.experiments
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.split
-import com.github.ajalt.clikt.parameters.types.int
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -30,26 +27,19 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.name
-import kotlin.system.exitProcess
-import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_EQUAL_RESULTS
-import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_NORMAL
-import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_NO_RESULTS
-import tools.aqua.stars.carla.experiments.Experiment.EXIT_CODE_UNEQUAL_RESULTS
-import tools.aqua.stars.carla.experiments.tsc.tsc
 import tools.aqua.stars.carla.experiments.tsc.tscLayer124Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer12Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer45Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer4Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayerFullFlat
 import tools.aqua.stars.carla.experiments.tsc.tscLayerPedestrianFlat
+import tools.aqua.stars.carla.experiments.tsc.tscOriginal
 import tools.aqua.stars.core.evaluation.TSCEvaluation
-import tools.aqua.stars.core.metric.metrics.evaluation.*
-import tools.aqua.stars.core.metric.metrics.postEvaluation.*
-import tools.aqua.stars.core.metric.utils.ApplicationConstantsHolder
-import tools.aqua.stars.core.metric.utils.ApplicationConstantsHolder.baselineDirectory
+import tools.aqua.stars.core.metrics.evaluation.*
+import tools.aqua.stars.core.metrics.postEvaluation.*
 import tools.aqua.stars.core.tsc.TSC
+import tools.aqua.stars.core.utils.ApplicationConstantsHolder
 import tools.aqua.stars.data.av.dataclasses.*
-import tools.aqua.stars.data.av.metrics.AverageVehiclesInEgosBlockMetric
 import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
 import tools.aqua.stars.importer.carla.loadSegments
 
@@ -88,16 +78,23 @@ class ExperimentConfiguration : CliktCommand() {
     downloadAndUnzipExperimentsData()
 
     val tscs =
-        mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
+        mutableListOf<
+            TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
-    tscs.addAll(tsc().buildProjections().also{ it.forEach { t ->  println("Size of ${t.identifier} flat: ${t.possibleTSCInstances}") }})
-    tscs.addAll(listOf(
-          tscLayer12Flat().also{ println("Size of 1+2 flat: ${it.possibleTSCInstances}") },
-          tscLayer124Flat().also{ println("Size of 1+2+4 flat: ${it.possibleTSCInstances}") },
-          tscLayer4Flat().also{ println("Size of 4 flat: ${it.possibleTSCInstances}") },
-          tscLayer45Flat().also{ println("Size of 4+5 flat: ${it.possibleTSCInstances}") },
-          tscLayerPedestrianFlat().also{ println("Size of Pedestrian flat: ${it.possibleTSCInstances}") },
-          tscLayerFullFlat().also{ println("Size of Full flat: ${it.possibleTSCInstances}") }))
+    tscs.addAll(
+        tscOriginal().buildProjections().also {
+          it.forEach { t -> println("Size of ${t.identifier} flat: ${t.possibleTSCInstances}") }
+        })
+    tscs.addAll(
+        listOf(
+            tscLayer12Flat().also { println("Size of 1+2 flat: ${it.possibleTSCInstances}") },
+            tscLayer124Flat().also { println("Size of 1+2+4 flat: ${it.possibleTSCInstances}") },
+            tscLayer4Flat().also { println("Size of 4 flat: ${it.possibleTSCInstances}") },
+            tscLayer45Flat().also { println("Size of 4+5 flat: ${it.possibleTSCInstances}") },
+            tscLayerPedestrianFlat().also {
+              println("Size of Pedestrian flat: ${it.possibleTSCInstances}")
+            },
+            tscLayerFullFlat().also { println("Size of Full flat: ${it.possibleTSCInstances}") }))
 
     println("Loading simulation runs...")
     val simulationRunsWrappers = getSimulationRuns()
@@ -112,14 +109,16 @@ class ExperimentConfiguration : CliktCommand() {
         )
 
     TSCEvaluation(
-                tscList = tscs,
-                writePlots = writePlots,
-                writePlotDataCSV = writePlotDataCSV,
-                writeSerializedResults = writeSerializedResults)
-            .apply {
-              registerMetricProviders(ValidTSCInstancesPerTSCMetric<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>())
-              runEvaluation(segments = segments)
-            }
+            tscList = tscs,
+            writePlots = writePlots,
+            writePlotDataCSV = writePlotDataCSV,
+            writeSerializedResults = writeSerializedResults)
+        .apply {
+          registerMetricProviders(
+              ValidTSCInstancesPerTSCMetric<
+                  Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>())
+          runEvaluation(segments = segments)
+        }
   }
 
   /**
@@ -159,9 +158,7 @@ class ExperimentConfiguration : CliktCommand() {
       File("./stars-reproduction-source/stars-experiments-data/simulation_runs").let { file ->
         file
             .walk()
-            .filter {
-              it.isDirectory && it != file
-            }
+            .filter { it.isDirectory && it != file }
             .toList()
             .mapNotNull { mapFolder ->
               var staticFile: Path? = null
