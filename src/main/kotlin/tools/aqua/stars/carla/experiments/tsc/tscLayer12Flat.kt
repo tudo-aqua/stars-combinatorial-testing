@@ -34,7 +34,7 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer12Flat(n : Int) =
+fun tscLayer12Flat(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
       bounded("TSCRoot", n to Int.MAX_VALUE) {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
