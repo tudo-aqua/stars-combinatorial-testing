@@ -24,13 +24,13 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.name
-import tools.aqua.stars.carla.experiments.tsc.tscOriginal
 import tools.aqua.stars.carla.experiments.tsc.tscLayer124Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer12Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer45Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayer4Flat
 import tools.aqua.stars.carla.experiments.tsc.tscLayerFullFlat
 import tools.aqua.stars.carla.experiments.tsc.tscLayerPedestrianFlat
+import tools.aqua.stars.carla.experiments.tsc.tscOriginal
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metrics.evaluation.*
 import tools.aqua.stars.core.tsc.TSC
@@ -45,19 +45,21 @@ fun main() {
       mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
   tscs.addAll(
-    tscOriginal().buildProjections().also {
-        it.forEach { t -> println("Size of ${t.identifier}: ${t.possibleTSCInstances}") }
+      tscOriginal().buildProjections().also {
+        it.forEach { t -> println("Size of ${t.identifier} flat: ${t.possibleTSCInstances}") }
       })
-  tscs.addAll(
-      listOf(
-          tscLayer12Flat().also { println("Size of 1+2 flat: ${it.possibleTSCInstances}") },
-          tscLayer124Flat().also { println("Size of 1+2+4 flat: ${it.possibleTSCInstances}") },
-          tscLayer4Flat().also { println("Size of 4 flat: ${it.possibleTSCInstances}") },
-          tscLayer45Flat().also { println("Size of 4+5 flat: ${it.possibleTSCInstances}") },
-          tscLayerPedestrianFlat().also {
-            println("Size of Pedestrian flat: ${it.possibleTSCInstances}")
-          },
-          tscLayerFullFlat().also { println("Size of Full flat: ${it.possibleTSCInstances}") }))
+  (1..6).forEach { n ->
+    tscs.addAll(
+        listOf(
+            tscLayer12Flat(n).also { println("Size of 1+2 flat: ${it.possibleTSCInstances}") },
+            tscLayer124Flat(n).also { println("Size of 1+2+4 flat: ${it.possibleTSCInstances}") },
+            tscLayer4Flat(n).also { println("Size of 4 flat: ${it.possibleTSCInstances}") },
+            tscLayer45Flat(n).also { println("Size of 4+5 flat: ${it.possibleTSCInstances}") },
+            tscLayerPedestrianFlat(n).also {
+              println("Size of Pedestrian flat: ${it.possibleTSCInstances}")
+            },
+            tscLayerFullFlat(n).also { println("Size of Full flat: ${it.possibleTSCInstances}") }))
+  }
 
   println("Loading simulation runs...")
   val simulationRunsWrappers = getSimulationRuns()
