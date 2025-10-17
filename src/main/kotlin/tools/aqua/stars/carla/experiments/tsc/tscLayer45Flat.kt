@@ -38,9 +38,9 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer45Flat() =
+fun tscLayer45Flat(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      optional("TSCRoot") {
+      bounded("TSCRoot", n to Int.MAX_VALUE) {
         leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
         leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
         leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
