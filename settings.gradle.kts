@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-rootProject.name = "stars-carla-experiments"
+rootProject.name = "stars-combinatorial-testing"
 
 plugins { id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0" }
