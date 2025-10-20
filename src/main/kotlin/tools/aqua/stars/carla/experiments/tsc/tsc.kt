@@ -64,7 +64,7 @@ const val LAYER_PEDESTRIAN = "Pedestrian"
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscOriginal() =
+fun tscOriginal(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
       all("TSCRoot") {
         projections {
@@ -109,7 +109,7 @@ fun tscOriginal() =
               projection(LAYER_1_2_4)
             }
 
-            optional("Dynamic Relation") {
+            bounded("Dynamic Relation", n to Int.MAX_VALUE) {
               projections {
                 projection(LAYER_PEDESTRIAN)
                 projectionRecursive(LAYER_4)
@@ -173,7 +173,7 @@ fun tscOriginal() =
                   ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
             }
 
-            optional("Dynamic Relation") {
+            bounded("Dynamic Relation", n to Int.MAX_VALUE) {
               projections {
                 projection(LAYER_PEDESTRIAN)
                 projectionRecursive(LAYER_4)
@@ -215,7 +215,7 @@ fun tscOriginal() =
               leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
             }
 
-            bounded("Stop Type", Pair(0, 1)) {
+            bounded("Stop Type", 0 to 1) {
               projections {
                 projectionRecursive(LAYER_1_2)
                 projectionRecursive(LAYER_1_2_4)
@@ -240,7 +240,7 @@ fun tscOriginal() =
                   ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
             }
 
-            optional("Dynamic Relation") {
+            bounded("Dynamic Relation", n to Int.MAX_VALUE) {
               projections {
                 projection(LAYER_PEDESTRIAN)
                 projectionRecursive(LAYER_4)
@@ -275,7 +275,7 @@ fun tscOriginal() =
               }
             }
 
-            bounded("Stop Type", Pair(0, 1)) {
+            bounded("Stop Type", 0 to 1) {
               projections {
                 projectionRecursive(LAYER_1_2)
                 projectionRecursive(LAYER_1_2_4)
