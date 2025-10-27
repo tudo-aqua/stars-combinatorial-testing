@@ -88,47 +88,24 @@ typealias ExperimentPredicateContext =
     PredicateContext<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>
 
 /** The daytime was mostly [Daytime.Sunset]. */
-fun ExperimentPredicateContext.sunset(): Boolean =
+fun ExperimentPredicateContext.timeNight(): Boolean =
     minPrevalence(this.segment.tickData.first(), 0.6) { d -> d.daytime == Daytime.Sunset }
 
 /** The daytime was mostly [Daytime.Noon]. */
-fun ExperimentPredicateContext.noon(): Boolean =
+fun ExperimentPredicateContext.timeDay(): Boolean =
     minPrevalence(this.segment.tickData.first(), 0.6) { d -> d.daytime == Daytime.Noon }
 
 /** The weather was mostly [WeatherType.Clear]. */
 fun ExperimentPredicateContext.weatherClear(): Boolean =
-    minPrevalence(this.segment.tickData.first(), 0.6) { d -> d.weather.type == WeatherType.Clear }
-
-/** The weather was mostly [WeatherType.Cloudy]. */
-fun ExperimentPredicateContext.weatherCloudy(): Boolean =
-    minPrevalence(this.segment.tickData.first(), 0.6) { d -> d.weather.type == WeatherType.Cloudy }
-
-/** The weather was mostly [WeatherType.Wet]. */
-fun ExperimentPredicateContext.weatherWet(): Boolean =
-    minPrevalence(this.segment.tickData.first(), 0.6) { d -> d.weather.type == WeatherType.Wet }
-
-/** The weather was mostly [WeatherType.WetCloudy]. */
-fun ExperimentPredicateContext.weatherWetCloudy(): Boolean =
     minPrevalence(this.segment.tickData.first(), 0.6) { d ->
-      d.weather.type == WeatherType.WetCloudy
+      d.weather.type in
+          listOf(WeatherType.Clear, WeatherType.Cloudy, WeatherType.Wet, WeatherType.WetCloudy)
     }
 
 /** The weather was mostly [WeatherType.SoftRainy]. */
-fun ExperimentPredicateContext.weatherSoftRain(): Boolean =
+fun ExperimentPredicateContext.weatherRain(): Boolean =
     minPrevalence(this.segment.tickData.first(), 0.6) { d ->
-      d.weather.type == WeatherType.SoftRainy
-    }
-
-/** The weather was mostly [WeatherType.MidRainy]. */
-fun ExperimentPredicateContext.weatherMidRain(): Boolean =
-    minPrevalence(this.segment.tickData.first(), 0.6) { d ->
-      d.weather.type == WeatherType.MidRainy
-    }
-
-/** The weather was mostly [WeatherType.HardRainy]. */
-fun ExperimentPredicateContext.weatherHardRain(): Boolean =
-    minPrevalence(this.segment.tickData.first(), 0.6) { d ->
-      d.weather.type == WeatherType.HardRainy
+      d.weather.type in listOf(WeatherType.SoftRainy, WeatherType.MidRainy, WeatherType.HardRainy)
     }
 
 /** There is a [Vehicle] between the two [Vehicle]s v0 and v1. */

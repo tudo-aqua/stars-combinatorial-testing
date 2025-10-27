@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.carla.experiments.flattsc
 
+import kotlin.math.min
 import tools.aqua.stars.carla.experiments.changedLane
 import tools.aqua.stars.carla.experiments.follows
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
@@ -35,23 +36,22 @@ import tools.aqua.stars.carla.experiments.makesRightTurn
 import tools.aqua.stars.carla.experiments.mustYield
 import tools.aqua.stars.carla.experiments.oncoming
 import tools.aqua.stars.carla.experiments.pedestrianCrossed
+import tools.aqua.stars.carla.experiments.timeDay
+import tools.aqua.stars.carla.experiments.timeNight
+import tools.aqua.stars.carla.experiments.weatherClear
+import tools.aqua.stars.carla.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
-import tools.aqua.stars.data.av.dataclasses.Actor
-import tools.aqua.stars.data.av.dataclasses.Segment
-import tools.aqua.stars.data.av.dataclasses.TickData
-import tools.aqua.stars.data.av.dataclasses.TickDataDifferenceSeconds
-import tools.aqua.stars.data.av.dataclasses.TickDataUnitSeconds
 
 /**
  * Returns the [TSC] with the dataclasses [Actor], [TickData], [Segment], [TickDataUnitSeconds], and
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer124Flat(n: Int) =
+fun tscLayerFullFlat(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", n to Int.MAX_VALUE) {
+      bounded("TSCRoot", min(n, 29) to 29) {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("Pedestrian Crossed in Junction") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
@@ -102,9 +102,17 @@ fun tscLayer124Flat(n: Int) =
           condition { ctx -> isInJunction.holds(ctx) && makesLeftTurn.holds(ctx) }
         }
         leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
-        leaf("Oncoming traffic") {
+        leaf("Oncoming traffic on Multi-Lane") {
           condition { ctx ->
-            (isOnMultiLane.holds(ctx) || isOnSingleLane.holds(ctx)) &&
+            isOnMultiLane.holds(ctx) &&
+                ctx.entityIds.any { otherVehicleId ->
+                  oncoming.holds(ctx, entityId2 = otherVehicleId)
+                }
+          }
+        }
+        leaf("Oncoming traffic on Single-Lane") {
+          condition { ctx ->
+            isOnSingleLane.holds(ctx) &&
                 ctx.entityIds.any { otherVehicleId ->
                   oncoming.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -119,11 +127,11 @@ fun tscLayer124Flat(n: Int) =
         leaf("Lane Follow") {
           condition { ctx -> isOnMultiLane.holds(ctx) && !changedLane.holds(ctx) }
         }
-        leaf("Has Red Light") {
-          condition { ctx ->
-            (isOnMultiLane.holds(ctx) || isOnSingleLane.holds(ctx)) &&
-                hasRelevantRedLight.holds(ctx)
-          }
+        leaf("Has Red Light on Multi-Lane") {
+          condition { ctx -> isOnMultiLane.holds(ctx) && hasRelevantRedLight.holds(ctx) }
+        }
+        leaf("Has Red Light on Single-Lane") {
+          condition { ctx -> isOnSingleLane.holds(ctx) && hasRelevantRedLight.holds(ctx) }
         }
         leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
         leaf("Has Stop Sign") {
@@ -132,8 +140,15 @@ fun tscLayer124Flat(n: Int) =
         leaf("Has Yield Sign") {
           condition { ctx -> isOnSingleLane.holds(ctx) && hasYieldSign.holds(ctx) }
         }
+
         leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
         leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
         leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+
+        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
+        leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
+
+        leaf("Sunset") { condition { ctx -> ctx.timeNight() } }
+        leaf("Noon") { condition { ctx -> ctx.timeDay() } }
       }
     }

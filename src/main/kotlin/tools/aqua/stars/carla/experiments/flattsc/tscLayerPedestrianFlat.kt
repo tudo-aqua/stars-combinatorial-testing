@@ -15,21 +15,17 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.carla.experiments.flattsc
 
+import kotlin.math.min
 import tools.aqua.stars.carla.experiments.isInJunction
 import tools.aqua.stars.carla.experiments.isOnMultiLane
 import tools.aqua.stars.carla.experiments.isOnSingleLane
-import tools.aqua.stars.carla.experiments.noon
 import tools.aqua.stars.carla.experiments.pedestrianCrossed
-import tools.aqua.stars.carla.experiments.sunset
+import tools.aqua.stars.carla.experiments.timeDay
+import tools.aqua.stars.carla.experiments.timeNight
 import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherCloudy
-import tools.aqua.stars.carla.experiments.weatherHardRain
-import tools.aqua.stars.carla.experiments.weatherMidRain
-import tools.aqua.stars.carla.experiments.weatherSoftRain
-import tools.aqua.stars.carla.experiments.weatherWet
-import tools.aqua.stars.carla.experiments.weatherWetCloudy
+import tools.aqua.stars.carla.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -41,14 +37,7 @@ import tools.aqua.stars.data.av.dataclasses.*
 @Suppress("StringLiteralDuplication")
 fun tscLayerPedestrianFlat(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", n to Int.MAX_VALUE) {
-        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-        leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
-        leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
-        leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
-        leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
-        leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
-        leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
+      bounded("TSCRoot", min(n, 10) to 10) {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("Pedestrian Crossed in Junction") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
@@ -61,7 +50,11 @@ fun tscLayerPedestrianFlat(n: Int) =
         }
         leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
         leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
-        leaf("Sunset") { condition { ctx -> ctx.sunset() } }
-        leaf("Noon") { condition { ctx -> ctx.noon() } }
+
+        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
+        leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
+
+        leaf("Sunset") { condition { ctx -> ctx.timeNight() } }
+        leaf("Noon") { condition { ctx -> ctx.timeDay() } }
       }
     }

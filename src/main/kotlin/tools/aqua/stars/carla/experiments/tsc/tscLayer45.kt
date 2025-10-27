@@ -20,15 +20,10 @@ package tools.aqua.stars.carla.experiments.tsc
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
 import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
 import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
-import tools.aqua.stars.carla.experiments.noon
-import tools.aqua.stars.carla.experiments.sunset
+import tools.aqua.stars.carla.experiments.timeDay
+import tools.aqua.stars.carla.experiments.timeNight
 import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherCloudy
-import tools.aqua.stars.carla.experiments.weatherHardRain
-import tools.aqua.stars.carla.experiments.weatherMidRain
-import tools.aqua.stars.carla.experiments.weatherSoftRain
-import tools.aqua.stars.carla.experiments.weatherWet
-import tools.aqua.stars.carla.experiments.weatherWetCloudy
+import tools.aqua.stars.carla.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -38,20 +33,23 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer45Flat(n: Int) =
+fun tscLayer45(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", n to Int.MAX_VALUE) {
-        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-        leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
-        leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
-        leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
-        leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
-        leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
-        leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
-        leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
-        leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
-        leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
-        leaf("Sunset") { condition { ctx -> ctx.sunset() } }
-        leaf("Noon") { condition { ctx -> ctx.noon() } }
+      all("TSCRoot") {
+        exclusive("Traffic Density") {
+          leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
+          leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
+          leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+        }
+
+        exclusive("Weather") {
+          leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
+          leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
+        }
+
+        exclusive("Time of Day") {
+          leaf("Day") { condition { ctx -> ctx.timeNight() } }
+          leaf("Night") { condition { ctx -> ctx.timeDay() } }
+        }
       }
     }

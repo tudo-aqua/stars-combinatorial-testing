@@ -15,35 +15,20 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.carla.experiments.flattsc
 
-import tools.aqua.stars.carla.experiments.changedLane
+import kotlin.math.min
 import tools.aqua.stars.carla.experiments.follows
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
 import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
 import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
 import tools.aqua.stars.carla.experiments.hasOvertaken
-import tools.aqua.stars.carla.experiments.hasRelevantRedLight
-import tools.aqua.stars.carla.experiments.hasStopSign
-import tools.aqua.stars.carla.experiments.hasYieldSign
 import tools.aqua.stars.carla.experiments.isInJunction
 import tools.aqua.stars.carla.experiments.isOnMultiLane
 import tools.aqua.stars.carla.experiments.isOnSingleLane
-import tools.aqua.stars.carla.experiments.makesLeftTurn
-import tools.aqua.stars.carla.experiments.makesNoTurn
-import tools.aqua.stars.carla.experiments.makesRightTurn
 import tools.aqua.stars.carla.experiments.mustYield
-import tools.aqua.stars.carla.experiments.noon
 import tools.aqua.stars.carla.experiments.oncoming
 import tools.aqua.stars.carla.experiments.pedestrianCrossed
-import tools.aqua.stars.carla.experiments.sunset
-import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherCloudy
-import tools.aqua.stars.carla.experiments.weatherHardRain
-import tools.aqua.stars.carla.experiments.weatherMidRain
-import tools.aqua.stars.carla.experiments.weatherSoftRain
-import tools.aqua.stars.carla.experiments.weatherWet
-import tools.aqua.stars.carla.experiments.weatherWetCloudy
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -53,25 +38,26 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerFullFlat(n: Int) =
+fun tscLayer4Flat(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", n to Int.MAX_VALUE) {
-        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-        leaf("Cloudy") { condition { ctx -> ctx.weatherCloudy() } }
-        leaf("Wet") { condition { ctx -> ctx.weatherWet() } }
-        leaf("Wet Cloudy") { condition { ctx -> ctx.weatherWetCloudy() } }
-        leaf("Soft Rain") { condition { ctx -> ctx.weatherSoftRain() } }
-        leaf("Mid Rain") { condition { ctx -> ctx.weatherMidRain() } }
-        leaf("Hard Rain") { condition { ctx -> ctx.weatherHardRain() } }
+      bounded("TSCRoot", min(n, 15) to 15) {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("Pedestrian Crossed in Junction") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
         }
         leaf("Pedestrian Crossed on Multi-Lane") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
+          condition { ctx ->
+            isOnMultiLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
+                pedestrianCrossed.holds(ctx)
+          }
         }
         leaf("Pedestrian Crossed on Single-Lane") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
+          condition { ctx ->
+            isOnSingleLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
+                pedestrianCrossed.holds(ctx)
+          }
         }
         leaf("Must Yield") {
           condition { ctx ->
@@ -91,7 +77,8 @@ fun tscLayerFullFlat(n: Int) =
         }
         leaf("Following Leading Vehicle on Single-Lane") {
           condition { ctx ->
-            isOnSingleLane.holds(ctx) &&
+            isOnSingleLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
                 ctx.entityIds.any { otherVehicleId ->
                   follows.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -99,63 +86,45 @@ fun tscLayerFullFlat(n: Int) =
         }
         leaf("Following Leading Vehicle on Multi-Lane") {
           condition { ctx ->
-            isOnMultiLane.holds(ctx) &&
+            isOnMultiLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
                 ctx.entityIds.any { otherVehicleId ->
                   follows.holds(ctx, entityId2 = otherVehicleId)
                 }
           }
         }
-        leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
-        leaf("Right Turn") {
-          condition { ctx -> isInJunction.holds(ctx) && makesRightTurn.holds(ctx) }
-        }
-        leaf("Left Turn") {
-          condition { ctx -> isInJunction.holds(ctx) && makesLeftTurn.holds(ctx) }
-        }
-        leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
-        leaf("Oncoming traffic on Multi-Lane") {
+        leaf("Multi-Lane") {
           condition { ctx ->
-            isOnMultiLane.holds(ctx) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  oncoming.holds(ctx, entityId2 = otherVehicleId)
-                }
+            isOnMultiLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
           }
         }
-        leaf("Oncoming traffic on Single-Lane") {
+        leaf("Oncoming traffic") {
           condition { ctx ->
-            isOnSingleLane.holds(ctx) &&
+            (isOnMultiLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) ||
+                isOnSingleLane.holds(
+                    ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)) &&
                 ctx.entityIds.any { otherVehicleId ->
                   oncoming.holds(ctx, entityId2 = otherVehicleId)
                 }
           }
         }
         leaf("Overtaking") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && hasOvertaken.holds(ctx) }
+          condition { ctx ->
+            isOnMultiLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
+                hasOvertaken.holds(ctx)
+          }
         }
-        leaf("Lane Change") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && changedLane.holds(ctx) }
+        leaf("Single-Lane") {
+          condition { ctx ->
+            isOnSingleLane.holds(
+                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+          }
         }
-        leaf("Lane Follow") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && !changedLane.holds(ctx) }
-        }
-        leaf("Has Red Light on Multi-Lane") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && hasRelevantRedLight.holds(ctx) }
-        }
-        leaf("Has Red Light on Single-Lane") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && hasRelevantRedLight.holds(ctx) }
-        }
-        leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
-        leaf("Has Stop Sign") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && hasStopSign.holds(ctx) }
-        }
-        leaf("Has Yield Sign") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && hasYieldSign.holds(ctx) }
-        }
-
         leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
         leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
         leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
-        leaf("Sunset") { condition { ctx -> ctx.sunset() } }
-        leaf("Noon") { condition { ctx -> ctx.noon() } }
       }
     }

@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.carla.experiments.flattsc
 
+import kotlin.math.min
 import tools.aqua.stars.carla.experiments.changedLane
 import tools.aqua.stars.carla.experiments.hasRelevantRedLight
 import tools.aqua.stars.carla.experiments.isInJunction
@@ -36,7 +37,7 @@ import tools.aqua.stars.data.av.dataclasses.*
 @Suppress("StringLiteralDuplication")
 fun tscLayer12Flat(n: Int) =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", n to Int.MAX_VALUE) {
+      bounded("TSCRoot", min(n, 11) to 11) {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
         leaf("Right Turn") {

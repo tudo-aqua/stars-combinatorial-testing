@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import java.net.URI
+
 plugins {
   kotlin("jvm") version "2.2.20"
   application
@@ -25,13 +27,15 @@ plugins {
 group = "tools.aqua"
 
 version = "0.5"
+val starsVersion = "1.0-v1-dev-6-8429d41-SNAPSHOT"
 
 repositories {
   mavenCentral()
-  mavenLocal()
-}
 
-var starsVersion = "1.0"
+  maven {
+    url = URI("https://central.sonatype.com/repository/maven-snapshots/")
+  }
+}
 
 dependencies {
   testImplementation(kotlin("test"))
@@ -39,9 +43,6 @@ dependencies {
   implementation(group = "tools.aqua", name = "stars-logic-kcmftbl", version = starsVersion)
   implementation(group = "tools.aqua", name = "stars-data-av", version = starsVersion)
   implementation(group = "tools.aqua", name = "stars-importer-carla", version = starsVersion)
-  implementation(group = "com.github.ajalt.clikt", name = "clikt", version = "4.4.0")
-  detektPlugins(
-      group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version = "1.23.6")
 }
 
 detekt {

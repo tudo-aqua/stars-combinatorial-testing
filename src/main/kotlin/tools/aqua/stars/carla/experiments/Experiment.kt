@@ -18,19 +18,15 @@
 package tools.aqua.stars.carla.experiments
 
 import java.io.File
-import java.net.URL
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.name
-import tools.aqua.stars.carla.experiments.tsc.tscLayer124Flat
-import tools.aqua.stars.carla.experiments.tsc.tscLayer12Flat
-import tools.aqua.stars.carla.experiments.tsc.tscLayer45Flat
-import tools.aqua.stars.carla.experiments.tsc.tscLayer4Flat
-import tools.aqua.stars.carla.experiments.tsc.tscLayerFullFlat
-import tools.aqua.stars.carla.experiments.tsc.tscLayerPedestrianFlat
-import tools.aqua.stars.carla.experiments.tsc.tscOriginal
+import kotlin.system.exitProcess
+import tools.aqua.stars.carla.experiments.flattsc.*
+import tools.aqua.stars.carla.experiments.tsc.*
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metrics.evaluation.*
 import tools.aqua.stars.core.tsc.TSC
@@ -44,22 +40,28 @@ fun main() {
   val tscs =
       mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
-  tscs.addAll(
-      tscOriginal().buildProjections().also {
-        it.forEach { t -> println("Size of ${t.identifier} flat: ${t.possibleTSCInstances}") }
-      })
-  (1..6).forEach { n ->
+  for (n in 1..29) {
+    println("==================== TSCs for n=$n ====================")
     tscs.addAll(
         listOf(
-            tscLayer12Flat(n).also { println("Size of 1+2 flat: ${it.possibleTSCInstances}") },
-            tscLayer124Flat(n).also { println("Size of 1+2+4 flat: ${it.possibleTSCInstances}") },
-            tscLayer4Flat(n).also { println("Size of 4 flat: ${it.possibleTSCInstances}") },
-            tscLayer45Flat(n).also { println("Size of 4+5 flat: ${it.possibleTSCInstances}") },
-            tscLayerPedestrianFlat(n).also {
-              println("Size of Pedestrian flat: ${it.possibleTSCInstances}")
+            tscLayer12(n = n).also { println("Size of 1+2: ${it.instanceCount}") },
+            tscLayer124(n = n).also { println("Size of 1+2+4: ${it.instanceCount}") },
+            tscLayer4(n = n).also { println("Size of 4: ${it.instanceCount}") },
+            tscLayer45(n = n).also { println("Size of 4+5: ${it.instanceCount}") },
+            tscLayerPedestrian(n = n).also { println("Size of Pedestrian: ${it.instanceCount}") },
+            tscLayerFull(n = n).also { println("Size of Full: ${it.instanceCount}") },
+            tscLayer12Flat(n = n).also { println("Size of 1+2 flat: ${it.instanceCount}") },
+            tscLayer124Flat(n = n).also { println("Size of 1+2+4 flat: ${it.instanceCount}") },
+            tscLayer4Flat(n = n).also { println("Size of 4 flat: ${it.instanceCount}") },
+            tscLayer45Flat(n = n).also { println("Size of 4+5 flat: ${it.instanceCount}") },
+            tscLayerPedestrianFlat(n = n).also {
+              println("Size of Pedestrian flat: ${it.instanceCount}")
             },
-            tscLayerFullFlat(n).also { println("Size of Full flat: ${it.possibleTSCInstances}") }))
+            tscLayerFullFlat(n = n).also { println("Size of Full flat: ${it.instanceCount}") }))
+    println()
   }
+
+  exitProcess(0)
 
   println("Loading simulation runs...")
   val simulationRunsWrappers = getSimulationRuns()
@@ -76,9 +78,7 @@ fun main() {
   TSCEvaluation(
           tscList = tscs, writePlots = true, writePlotDataCSV = true, writeSerializedResults = true)
       .apply {
-        registerMetricProviders(
-            ValidTSCInstancesPerTSCMetric<
-                Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>())
+        registerMetricProviders(ValidTSCInstancesPerTSCMetric())
         runEvaluation(segments = segments)
       }
 }
@@ -98,7 +98,8 @@ private fun downloadAndUnzipExperimentsData() {
 
   if (!File(reproductionSourceZipFile).exists()) {
     println("Start with downloading the experiments data. This may take a while.")
-    URL("https://zenodo.org/record/8131947/files/stars-reproduction-source.zip?download=1")
+    URI("https://zenodo.org/record/8131947/files/stars-reproduction-source.zip?download=1")
+        .toURL()
         .openStream()
         .use { Files.copy(it, Paths.get(reproductionSourceZipFile)) }
   }
@@ -154,7 +155,7 @@ private fun getSimulationRuns(): List<CarlaSimulationRunsWrapper> =
  *   [outputDir] directory.
  * @return the extracted directory i.e.
  */
-private fun extractZipFile(zipFile: File, outputDir: File): File? {
+private fun extractZipFile(zipFile: File, outputDir: File): File {
   ZipFile(zipFile).use { zip ->
     zip.entries().asSequence().forEach { entry ->
       zip.getInputStream(entry).use { input ->
