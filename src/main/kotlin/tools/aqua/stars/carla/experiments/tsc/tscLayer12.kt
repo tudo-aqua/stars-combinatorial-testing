@@ -52,7 +52,10 @@ fun tscLayer12(n: Int) =
           all("Multi-Lane") {
             condition { ctx ->
               isOnMultiLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             exclusive("Maneuver") {
@@ -67,7 +70,10 @@ fun tscLayer12(n: Int) =
           all("Single-Lane") {
             condition { ctx ->
               isOnSingleLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Stop Type", 0 to 1) {

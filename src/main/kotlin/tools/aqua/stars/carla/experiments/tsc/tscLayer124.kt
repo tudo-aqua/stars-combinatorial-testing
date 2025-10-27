@@ -81,7 +81,10 @@ fun tscLayer124(n: Int) =
           all("Multi-Lane") {
             condition { ctx ->
               isOnMultiLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Dynamic Relation", min(n, 4) to 4) {
@@ -115,7 +118,10 @@ fun tscLayer124(n: Int) =
           all("Single-Lane") {
             condition { ctx ->
               isOnSingleLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Dynamic Relation", min(n, 3) to 3) {

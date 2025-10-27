@@ -19,7 +19,6 @@ package tools.aqua.stars.carla.experiments.tsc
 
 import kotlin.math.min
 import tools.aqua.stars.carla.experiments.changedLane
-import tools.aqua.stars.carla.experiments.didCrossRedLight
 import tools.aqua.stars.carla.experiments.follows
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
 import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
@@ -28,7 +27,6 @@ import tools.aqua.stars.carla.experiments.hasOvertaken
 import tools.aqua.stars.carla.experiments.hasRelevantRedLight
 import tools.aqua.stars.carla.experiments.hasStopSign
 import tools.aqua.stars.carla.experiments.hasYieldSign
-import tools.aqua.stars.carla.experiments.hasYielded
 import tools.aqua.stars.carla.experiments.isInJunction
 import tools.aqua.stars.carla.experiments.isOnMultiLane
 import tools.aqua.stars.carla.experiments.isOnSingleLane
@@ -36,10 +34,8 @@ import tools.aqua.stars.carla.experiments.makesLeftTurn
 import tools.aqua.stars.carla.experiments.makesNoTurn
 import tools.aqua.stars.carla.experiments.makesRightTurn
 import tools.aqua.stars.carla.experiments.mustYield
-import tools.aqua.stars.carla.experiments.noRightOvertaking
 import tools.aqua.stars.carla.experiments.oncoming
 import tools.aqua.stars.carla.experiments.pedestrianCrossed
-import tools.aqua.stars.carla.experiments.stopAtEnd
 import tools.aqua.stars.carla.experiments.timeDay
 import tools.aqua.stars.carla.experiments.timeNight
 import tools.aqua.stars.carla.experiments.weatherClear
@@ -61,9 +57,7 @@ fun tscLayerFull(n: Int) =
             condition { ctx -> isInJunction.holds(ctx) }
 
             bounded("Dynamic Relation", min(n, 3) to 3) {
-              leaf("Pedestrian Crossed") {
-                condition { ctx -> pedestrianCrossed.holds(ctx) }
-              }
+              leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
 
               leaf("Must Yield") {
                 condition { ctx ->
@@ -91,7 +85,10 @@ fun tscLayerFull(n: Int) =
           all("Multi-Lane") {
             condition { ctx ->
               isOnMultiLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Dynamic Relation", min(n, 4) to 4) {
@@ -102,12 +99,8 @@ fun tscLayerFull(n: Int) =
                   }
                 }
               }
-              leaf("Overtaking") {
-                condition { ctx -> hasOvertaken.holds(ctx) }
-              }
-              leaf("Pedestrian Crossed") {
-                condition { ctx -> pedestrianCrossed.holds(ctx) }
-              }
+              leaf("Overtaking") { condition { ctx -> hasOvertaken.holds(ctx) } }
+              leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
               leaf("Following Leading Vehicle") {
                 condition { ctx ->
                   ctx.entityIds.any { otherVehicleId ->
@@ -123,15 +116,16 @@ fun tscLayerFull(n: Int) =
             }
 
             bounded("Stop Type", 0 to 1) {
-              leaf("Has Red Light") {
-                condition { ctx -> hasRelevantRedLight.holds(ctx) }
-              }
+              leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
             }
           }
           all("Single-Lane") {
             condition { ctx ->
               isOnSingleLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Dynamic Relation", min(n, 3) to 3) {
@@ -143,9 +137,7 @@ fun tscLayerFull(n: Int) =
                 }
               }
 
-              leaf("Pedestrian Crossed") {
-                condition { ctx -> pedestrianCrossed.holds(ctx) }
-              }
+              leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
 
               leaf("Following Leading Vehicle") {
                 condition { ctx ->
@@ -157,13 +149,9 @@ fun tscLayerFull(n: Int) =
             }
 
             bounded("Stop Type", 0 to 1) {
-              leaf("Has Stop Sign") {
-                condition { ctx -> hasStopSign.holds(ctx) }
-              }
+              leaf("Has Stop Sign") { condition { ctx -> hasStopSign.holds(ctx) } }
               leaf("Has Yield Sign") { condition { ctx -> hasYieldSign.holds(ctx) } }
-              leaf("Has Red Light") {
-                condition { ctx -> hasRelevantRedLight.holds(ctx) }
-              }
+              leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
             }
           }
         }

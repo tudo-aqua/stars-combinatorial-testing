@@ -42,7 +42,10 @@ fun tscLayerPedestrian(n: Int) =
           all("Multi-Lane") {
             condition { ctx ->
               isOnMultiLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Dynamic Relation", min(n, 1) to 1) {
@@ -52,7 +55,10 @@ fun tscLayerPedestrian(n: Int) =
           all("Single-Lane") {
             condition { ctx ->
               isOnSingleLane.holds(
-                  ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                  ctx,
+                  ctx.segment.tickData.first().currentTick,
+                  ctx.segment.primaryEntityId,
+              )
             }
 
             bounded("Dynamic Relation", min(n, 1) to 1) {

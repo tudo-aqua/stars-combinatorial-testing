@@ -57,7 +57,9 @@ fun main() {
             tscLayerPedestrianFlat(n = n).also {
               println("Size of Pedestrian flat: ${it.instanceCount}")
             },
-            tscLayerFullFlat(n = n).also { println("Size of Full flat: ${it.instanceCount}") }))
+            tscLayerFullFlat(n = n).also { println("Size of Full flat: ${it.instanceCount}") },
+        )
+    )
     println()
   }
 
@@ -76,7 +78,11 @@ fun main() {
       )
 
   TSCEvaluation(
-          tscList = tscs, writePlots = true, writePlotDataCSV = true, writeSerializedResults = true)
+          tscList = tscs,
+          writePlots = true,
+          writePlotDataCSV = true,
+          writeSerializedResults = true,
+      )
       .apply {
         registerMetricProviders(ValidTSCInstancesPerTSCMetric())
         runEvaluation(segments = segments)

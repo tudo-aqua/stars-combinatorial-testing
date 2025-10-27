@@ -48,15 +48,19 @@ fun tscLayer4Flat(n: Int) =
         leaf("Pedestrian Crossed on Multi-Lane") {
           condition { ctx ->
             isOnMultiLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
-                pedestrianCrossed.holds(ctx)
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            ) && pedestrianCrossed.holds(ctx)
           }
         }
         leaf("Pedestrian Crossed on Single-Lane") {
           condition { ctx ->
             isOnSingleLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
-                pedestrianCrossed.holds(ctx)
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            ) && pedestrianCrossed.holds(ctx)
           }
         }
         leaf("Must Yield") {
@@ -78,7 +82,10 @@ fun tscLayer4Flat(n: Int) =
         leaf("Following Leading Vehicle on Single-Lane") {
           condition { ctx ->
             isOnSingleLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            ) &&
                 ctx.entityIds.any { otherVehicleId ->
                   follows.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -87,7 +94,10 @@ fun tscLayer4Flat(n: Int) =
         leaf("Following Leading Vehicle on Multi-Lane") {
           condition { ctx ->
             isOnMultiLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            ) &&
                 ctx.entityIds.any { otherVehicleId ->
                   follows.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -96,15 +106,24 @@ fun tscLayer4Flat(n: Int) =
         leaf("Multi-Lane") {
           condition { ctx ->
             isOnMultiLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            )
           }
         }
         leaf("Oncoming traffic") {
           condition { ctx ->
             (isOnMultiLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) ||
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            ) ||
                 isOnSingleLane.holds(
-                    ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)) &&
+                    ctx,
+                    ctx.segment.tickData.first().currentTick,
+                    ctx.segment.primaryEntityId,
+                )) &&
                 ctx.entityIds.any { otherVehicleId ->
                   oncoming.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -113,14 +132,19 @@ fun tscLayer4Flat(n: Int) =
         leaf("Overtaking") {
           condition { ctx ->
             isOnMultiLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId) &&
-                hasOvertaken.holds(ctx)
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            ) && hasOvertaken.holds(ctx)
           }
         }
         leaf("Single-Lane") {
           condition { ctx ->
             isOnSingleLane.holds(
-                ctx, ctx.segment.tickData.first().currentTick, ctx.segment.primaryEntityId)
+                ctx,
+                ctx.segment.tickData.first().currentTick,
+                ctx.segment.primaryEntityId,
+            )
           }
         }
         leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }

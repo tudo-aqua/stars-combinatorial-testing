@@ -20,21 +20,19 @@ import java.net.URI
 plugins {
   kotlin("jvm") version "2.2.20"
   application
-  id("io.gitlab.arturbosch.detekt") version "1.23.6"
-  id("com.diffplug.spotless") version "6.25.0"
+  id("com.diffplug.spotless") version "8.0.0"
 }
 
 group = "tools.aqua"
 
 version = "0.5"
+
 val starsVersion = "1.0-v1-dev-6-8429d41-SNAPSHOT"
 
 repositories {
   mavenCentral()
 
-  maven {
-    url = URI("https://central.sonatype.com/repository/maven-snapshots/")
-  }
+  maven { url = URI("https://central.sonatype.com/repository/maven-snapshots/") }
 }
 
 dependencies {
@@ -43,11 +41,6 @@ dependencies {
   implementation(group = "tools.aqua", name = "stars-logic-kcmftbl", version = starsVersion)
   implementation(group = "tools.aqua", name = "stars-data-av", version = starsVersion)
   implementation(group = "tools.aqua", name = "stars-importer-carla", version = starsVersion)
-}
-
-detekt {
-  basePath = rootProject.projectDir.absolutePath
-  config.setFrom(files(rootProject.file("contrib/detekt-rules.yml")))
 }
 
 spotless {
@@ -60,7 +53,8 @@ spotless {
   kotlinGradle {
     licenseHeaderFile(
             rootProject.file("contrib/license-header.template.kt"),
-            "(import |@file|plugins |dependencyResolutionManagement|rootProject.name)")
+            "(import |@file|plugins |dependencyResolutionManagement|rootProject.name)",
+        )
         .also { it.updateYearWithLatest(true) }
     ktfmt()
   }
@@ -132,7 +126,8 @@ val reproductionTestAll by
               "baseline-all",
 
               // Show memory usage
-              "--showMemoryConsumption")
+              "--showMemoryConsumption",
+          )
     }
 
 application {
