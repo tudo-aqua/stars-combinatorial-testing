@@ -43,27 +43,7 @@ fun tscLayer4Flat() =
     ) {
       optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("Pedestrian Crossed in Junction") {
-          condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Multi-Lane") {
-          condition { ctx ->
-            isOnMultiLane.holds(
-                ctx,
-                ctx.segment.tickData.first().currentTick,
-                ctx.segment.primaryEntityId,
-            ) && pedestrianCrossed.holds(ctx)
-          }
-        }
-        leaf("Pedestrian Crossed on Single-Lane") {
-          condition { ctx ->
-            isOnSingleLane.holds(
-                ctx,
-                ctx.segment.tickData.first().currentTick,
-                ctx.segment.primaryEntityId,
-            ) && pedestrianCrossed.holds(ctx)
-          }
-        }
+        leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
         leaf("Must Yield") {
           condition { ctx ->
             isInJunction.holds(ctx) &&
@@ -72,36 +52,9 @@ fun tscLayer4Flat() =
                 }
           }
         }
-        leaf("Following Leading Vehicle in Junction") {
+        leaf("Following Leading Vehicle") {
           condition { ctx ->
-            isInJunction.holds(ctx) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  follows.holds(ctx, entityId2 = otherVehicleId)
-                }
-          }
-        }
-        leaf("Following Leading Vehicle on Single-Lane") {
-          condition { ctx ->
-            isOnSingleLane.holds(
-                ctx,
-                ctx.segment.tickData.first().currentTick,
-                ctx.segment.primaryEntityId,
-            ) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  follows.holds(ctx, entityId2 = otherVehicleId)
-                }
-          }
-        }
-        leaf("Following Leading Vehicle on Multi-Lane") {
-          condition { ctx ->
-            isOnMultiLane.holds(
-                ctx,
-                ctx.segment.tickData.first().currentTick,
-                ctx.segment.primaryEntityId,
-            ) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  follows.holds(ctx, entityId2 = otherVehicleId)
-                }
+            ctx.entityIds.any { otherVehicleId -> follows.holds(ctx, entityId2 = otherVehicleId) }
           }
         }
         leaf("Multi-Lane") {
@@ -115,30 +68,10 @@ fun tscLayer4Flat() =
         }
         leaf("Oncoming traffic") {
           condition { ctx ->
-            (isOnMultiLane.holds(
-                ctx,
-                ctx.segment.tickData.first().currentTick,
-                ctx.segment.primaryEntityId,
-            ) ||
-                isOnSingleLane.holds(
-                    ctx,
-                    ctx.segment.tickData.first().currentTick,
-                    ctx.segment.primaryEntityId,
-                )) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  oncoming.holds(ctx, entityId2 = otherVehicleId)
-                }
+            ctx.entityIds.any { otherVehicleId -> oncoming.holds(ctx, entityId2 = otherVehicleId) }
           }
         }
-        leaf("Overtaking") {
-          condition { ctx ->
-            isOnMultiLane.holds(
-                ctx,
-                ctx.segment.tickData.first().currentTick,
-                ctx.segment.primaryEntityId,
-            ) && hasOvertaken.holds(ctx)
-          }
-        }
+        leaf("Overtaking") { condition { ctx -> hasOvertaken.holds(ctx) } }
         leaf("Single-Lane") {
           condition { ctx ->
             isOnSingleLane.holds(
