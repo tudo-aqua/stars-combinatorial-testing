@@ -33,8 +33,10 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer45(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+fun tscLayer45() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "TSC Layer 4 & 5"
+    ) {
       all("TSCRoot") {
         exclusive("Traffic Density") {
           leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }

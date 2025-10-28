@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.flattsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.changedLane
 import tools.aqua.stars.carla.experiments.follows
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
@@ -49,9 +48,9 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerFullFlat(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", min(n, 29) to 29) {
+fun tscLayerFullFlat() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Full Flat") {
+      optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("Pedestrian Crossed in Junction") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }

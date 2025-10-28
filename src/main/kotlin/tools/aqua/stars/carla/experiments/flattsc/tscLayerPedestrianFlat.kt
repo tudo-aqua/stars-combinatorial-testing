@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.flattsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.isInJunction
 import tools.aqua.stars.carla.experiments.isOnMultiLane
 import tools.aqua.stars.carla.experiments.isOnSingleLane
@@ -35,9 +34,11 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerPedestrianFlat(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", min(n, 10) to 10) {
+fun tscLayerPedestrianFlat() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "TSC Pedestrian Flat"
+    ) {
+      optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("Pedestrian Crossed in Junction") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }

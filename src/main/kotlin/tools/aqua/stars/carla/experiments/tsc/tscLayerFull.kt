@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.tsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.changedLane
 import tools.aqua.stars.carla.experiments.follows
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
@@ -49,14 +48,14 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerFull(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+fun tscLayerFull() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Full") {
       all("TSCRoot") {
         exclusive("Road Type") {
           all("Junction") {
             condition { ctx -> isInJunction.holds(ctx) }
 
-            bounded("Dynamic Relation", min(n, 3) to 3) {
+            optional("Dynamic Relation") {
               leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
 
               leaf("Must Yield") {
@@ -91,7 +90,7 @@ fun tscLayerFull(n: Int) =
               )
             }
 
-            bounded("Dynamic Relation", min(n, 4) to 4) {
+            optional("Dynamic Relation") {
               leaf("Oncoming traffic") {
                 condition { ctx ->
                   ctx.entityIds.any { otherVehicleId ->
@@ -128,7 +127,7 @@ fun tscLayerFull(n: Int) =
               )
             }
 
-            bounded("Dynamic Relation", min(n, 3) to 3) {
+            optional("Dynamic Relation") {
               leaf("Oncoming traffic") {
                 condition { ctx ->
                   ctx.entityIds.any { otherVehicleId ->

@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.tsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.*
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.tsc
@@ -28,14 +27,16 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerPedestrian(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+fun tscLayerPedestrian() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "TSC Pedestrian"
+    ) {
       all("TSCRoot") {
         exclusive("Road Type") {
           all("Junction") {
             condition { ctx -> isInJunction.holds(ctx) }
 
-            bounded("Dynamic Relation", min(n, 1) to 1) {
+            optional("Dynamic Relation") {
               leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
             }
           }
@@ -48,7 +49,7 @@ fun tscLayerPedestrian(n: Int) =
               )
             }
 
-            bounded("Dynamic Relation", min(n, 1) to 1) {
+            optional("Dynamic Relation") {
               leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
             }
           }
@@ -61,7 +62,7 @@ fun tscLayerPedestrian(n: Int) =
               )
             }
 
-            bounded("Dynamic Relation", min(n, 1) to 1) {
+            optional("Dynamic Relation") {
               leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
             }
           }

@@ -27,7 +27,7 @@ group = "tools.aqua"
 
 version = "0.5"
 
-val starsVersion = "1.0-v1-dev-6-8429d41-SNAPSHOT"
+val starsVersion = "1.0-sncs-cmbt-19-b194da0-SNAPSHOT"
 
 repositories {
   mavenCentral()

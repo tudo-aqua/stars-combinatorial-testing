@@ -24,11 +24,11 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.name
-import kotlin.system.exitProcess
 import tools.aqua.stars.carla.experiments.flattsc.*
 import tools.aqua.stars.carla.experiments.tsc.*
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metrics.evaluation.*
+import tools.aqua.stars.core.metrics.evaluation.NWayFeatureCombinationsPerTSCMetric
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.data.av.dataclasses.*
 import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
@@ -40,30 +40,24 @@ fun main() {
   val tscs =
       mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
-  for (n in 1..29) {
-    println("==================== TSCs for n=$n ====================")
-    tscs.addAll(
-        listOf(
-            tscLayer12(n = n).also { println("Size of 1+2: ${it.instanceCount}") },
-            tscLayer124(n = n).also { println("Size of 1+2+4: ${it.instanceCount}") },
-            tscLayer4(n = n).also { println("Size of 4: ${it.instanceCount}") },
-            tscLayer45(n = n).also { println("Size of 4+5: ${it.instanceCount}") },
-            tscLayerPedestrian(n = n).also { println("Size of Pedestrian: ${it.instanceCount}") },
-            tscLayerFull(n = n).also { println("Size of Full: ${it.instanceCount}") },
-            tscLayer12Flat(n = n).also { println("Size of 1+2 flat: ${it.instanceCount}") },
-            tscLayer124Flat(n = n).also { println("Size of 1+2+4 flat: ${it.instanceCount}") },
-            tscLayer4Flat(n = n).also { println("Size of 4 flat: ${it.instanceCount}") },
-            tscLayer45Flat(n = n).also { println("Size of 4+5 flat: ${it.instanceCount}") },
-            tscLayerPedestrianFlat(n = n).also {
-              println("Size of Pedestrian flat: ${it.instanceCount}")
-            },
-            tscLayerFullFlat(n = n).also { println("Size of Full flat: ${it.instanceCount}") },
-        )
-    )
-    println()
-  }
+  tscs.addAll(
+      listOf(
+          tscLayer12().also { println("Size of 1+2: ${it.instanceCount}") },
+          tscLayer124().also { println("Size of 1+2+4: ${it.instanceCount}") },
+          tscLayer4().also { println("Size of 4: ${it.instanceCount}") },
+          tscLayer45().also { println("Size of 4+5: ${it.instanceCount}") },
+          tscLayerPedestrian().also { println("Size of Pedestrian: ${it.instanceCount}") },
+          tscLayerFull().also { println("Size of Full: ${it.instanceCount}") },
+          tscLayer12Flat().also { println("Size of 1+2 flat: ${it.instanceCount}") },
+          tscLayer124Flat().also { println("Size of 1+2+4 flat: ${it.instanceCount}") },
+          tscLayer4Flat().also { println("Size of 4 flat: ${it.instanceCount}") },
+          tscLayer45Flat().also { println("Size of 4+5 flat: ${it.instanceCount}") },
+          tscLayerPedestrianFlat().also { println("Size of Pedestrian flat: ${it.instanceCount}") },
+          tscLayerFullFlat().also { println("Size of Full flat: ${it.instanceCount}") },
+      )
+  )
 
-  exitProcess(0)
+  //  exitProcess(0)
 
   println("Loading simulation runs...")
   val simulationRunsWrappers = getSimulationRuns()
@@ -72,6 +66,7 @@ fun main() {
   val segments =
       loadSegments(
           useEveryVehicleAsEgo = false,
+          useFirstVehicleAsEgo = true,
           minSegmentTickCount = 11,
           orderFilesBySeed = true,
           simulationRunsWrappers = simulationRunsWrappers,
@@ -85,6 +80,7 @@ fun main() {
       )
       .apply {
         registerMetricProviders(ValidTSCInstancesPerTSCMetric())
+        (1..6).forEach { registerMetricProviders(NWayFeatureCombinationsPerTSCMetric(it)) }
         runEvaluation(segments = segments)
       }
 }

@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.flattsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.changedLane
 import tools.aqua.stars.carla.experiments.hasRelevantRedLight
 import tools.aqua.stars.carla.experiments.isInJunction
@@ -35,9 +34,11 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer12Flat(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", min(n, 11) to 11) {
+fun tscLayer12Flat() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "TSC Layer 1 & 2 Flat"
+    ) {
+      optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
         leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
         leaf("Right Turn") {

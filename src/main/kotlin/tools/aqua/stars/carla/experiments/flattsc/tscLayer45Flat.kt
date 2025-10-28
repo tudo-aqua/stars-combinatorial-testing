@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.flattsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
 import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
 import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
@@ -34,9 +33,11 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer45Flat(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-      bounded("TSCRoot", min(n, 7) to 7) {
+fun tscLayer45Flat() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
+        "TSC Layer 4 & 5 Flat"
+    ) {
+      optional("TSCRoot") {
         leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
         leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
         leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }

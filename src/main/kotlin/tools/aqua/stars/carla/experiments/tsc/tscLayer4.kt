@@ -17,7 +17,6 @@
 
 package tools.aqua.stars.carla.experiments.tsc
 
-import kotlin.math.min
 import tools.aqua.stars.carla.experiments.*
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
@@ -28,14 +27,14 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer4(n: Int) =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
+fun tscLayer4() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Layer 4") {
       all("TSCRoot") {
         exclusive("Road Type") {
           all("Junction") {
             condition { ctx -> isInJunction.holds(ctx) }
 
-            bounded("Dynamic Relation", min(n, 3) to 3) {
+            optional("Dynamic Relation") {
               leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
 
               leaf("Must Yield") {
@@ -64,7 +63,7 @@ fun tscLayer4(n: Int) =
               )
             }
 
-            bounded("Dynamic Relation", min(n, 4) to 4) {
+            optional("Dynamic Relation") {
               leaf("Oncoming traffic") {
                 condition { ctx ->
                   ctx.entityIds.any { otherVehicleId ->
@@ -92,7 +91,7 @@ fun tscLayer4(n: Int) =
               )
             }
 
-            bounded("Dynamic Relation", min(n, 3) to 3) {
+            optional("Dynamic Relation") {
               leaf("Oncoming traffic") {
                 condition { ctx ->
                   ctx.entityIds.any { otherVehicleId ->
