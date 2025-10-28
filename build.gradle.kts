@@ -27,10 +27,11 @@ group = "tools.aqua"
 
 version = "0.5"
 
-val starsVersion = "1.0-sncs-cmbt-22-455761d-SNAPSHOT"
+val starsVersion = "1.0-sncs-cmbt-23-8cf60f5-SNAPSHOT"
 
 repositories {
   mavenCentral()
+  mavenLocal()
 
   maven { url = URI("https://central.sonatype.com/repository/maven-snapshots/") }
 }
