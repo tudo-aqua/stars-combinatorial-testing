@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments
+package tools.aqua.stars.combinatorial.testing.experiments
 
 import java.io.File
 import java.net.URI
@@ -24,8 +24,18 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.name
-import tools.aqua.stars.carla.experiments.flattsc.*
-import tools.aqua.stars.carla.experiments.tsc.*
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer124Flat
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer12Flat
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer45Flat
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer4Flat
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayerFullFlat
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayerPedestrianFlat
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer12
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer124
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer4
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer45
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayerFull
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayerPedestrian
 import tools.aqua.stars.core.evaluation.TSCEvaluation
 import tools.aqua.stars.core.metrics.evaluation.*
 import tools.aqua.stars.core.metrics.evaluation.NWayFeatureCombinationsPerTSCMetric

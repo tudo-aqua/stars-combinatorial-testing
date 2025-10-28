@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.combinatorial.testing.experiments.tsc
 
-import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
-import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
-import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
-import tools.aqua.stars.carla.experiments.timeDay
-import tools.aqua.stars.carla.experiments.timeNight
-import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherRain
+import tools.aqua.stars.combinatorial.testing.experiments.hasHighTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasLowTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasMidTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.timeDay
+import tools.aqua.stars.combinatorial.testing.experiments.timeNight
+import tools.aqua.stars.combinatorial.testing.experiments.weatherClear
+import tools.aqua.stars.combinatorial.testing.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*

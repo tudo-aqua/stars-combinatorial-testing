@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.flattsc
+package tools.aqua.stars.combinatorial.testing.experiments.flattsc
 
-import tools.aqua.stars.carla.experiments.isInJunction
-import tools.aqua.stars.carla.experiments.isOnMultiLane
-import tools.aqua.stars.carla.experiments.isOnSingleLane
-import tools.aqua.stars.carla.experiments.pedestrianCrossed
-import tools.aqua.stars.carla.experiments.timeDay
-import tools.aqua.stars.carla.experiments.timeNight
-import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherRain
+import tools.aqua.stars.combinatorial.testing.experiments.changedLane
+import tools.aqua.stars.combinatorial.testing.experiments.hasRelevantRedLight
+import tools.aqua.stars.combinatorial.testing.experiments.isInJunction
+import tools.aqua.stars.combinatorial.testing.experiments.isOnMultiLane
+import tools.aqua.stars.combinatorial.testing.experiments.isOnSingleLane
+import tools.aqua.stars.combinatorial.testing.experiments.makesLeftTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesNoTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesRightTurn
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -34,28 +34,21 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerPedestrianFlat() =
+fun tscLayer12Flat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "TSC Pedestrian Flat"
+        "TSC Layer 1 & 2 Flat"
     ) {
       optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("Pedestrian Crossed in Junction") {
-          condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Multi-Lane") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Single-Lane") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
+        leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
+        leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
+        leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
         leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
+        leaf("Lane Change") { condition { ctx -> changedLane.holds(ctx) } }
+        leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
+        leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
         leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
-
-        leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-        leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
-
-        leaf("Sunset") { condition { ctx -> ctx.timeNight() } }
-        leaf("Noon") { condition { ctx -> ctx.timeDay() } }
+        leaf("Has Stop Sign") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+        leaf("Has Yield Sign") { condition { ctx -> isOnSingleLane.holds(ctx) } }
       }
     }

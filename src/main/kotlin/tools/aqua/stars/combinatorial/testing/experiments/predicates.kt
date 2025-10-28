@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments
+package tools.aqua.stars.combinatorial.testing.experiments
 
 import kotlin.math.abs
 import kotlin.math.sign

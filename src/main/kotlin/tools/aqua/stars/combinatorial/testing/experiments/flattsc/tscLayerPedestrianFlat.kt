@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.flattsc
+package tools.aqua.stars.combinatorial.testing.experiments.flattsc
 
-import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
-import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
-import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
-import tools.aqua.stars.carla.experiments.timeDay
-import tools.aqua.stars.carla.experiments.timeNight
-import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherRain
+import tools.aqua.stars.combinatorial.testing.experiments.isInJunction
+import tools.aqua.stars.combinatorial.testing.experiments.isOnMultiLane
+import tools.aqua.stars.combinatorial.testing.experiments.isOnSingleLane
+import tools.aqua.stars.combinatorial.testing.experiments.pedestrianCrossed
+import tools.aqua.stars.combinatorial.testing.experiments.timeDay
+import tools.aqua.stars.combinatorial.testing.experiments.timeNight
+import tools.aqua.stars.combinatorial.testing.experiments.weatherClear
+import tools.aqua.stars.combinatorial.testing.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -33,16 +34,27 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer45Flat() =
+fun tscLayerPedestrianFlat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "TSC Layer 4 & 5 Flat"
+        "TSC Pedestrian Flat"
     ) {
       optional("TSCRoot") {
-        leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
-        leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
-        leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+        leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
+        leaf("Pedestrian Crossed in Junction") {
+          condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
+        }
+        leaf("Pedestrian Crossed on Multi-Lane") {
+          condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
+        }
+        leaf("Pedestrian Crossed on Single-Lane") {
+          condition { ctx -> isOnSingleLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
+        }
+        leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
+        leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+
         leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
         leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
+
         leaf("Sunset") { condition { ctx -> ctx.timeNight() } }
         leaf("Noon") { condition { ctx -> ctx.timeDay() } }
       }

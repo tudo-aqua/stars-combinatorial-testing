@@ -15,9 +15,30 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.combinatorial.testing.experiments.tsc
 
-import tools.aqua.stars.carla.experiments.*
+import tools.aqua.stars.combinatorial.testing.experiments.changedLane
+import tools.aqua.stars.combinatorial.testing.experiments.follows
+import tools.aqua.stars.combinatorial.testing.experiments.hasHighTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasLowTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasMidTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasOvertaken
+import tools.aqua.stars.combinatorial.testing.experiments.hasRelevantRedLight
+import tools.aqua.stars.combinatorial.testing.experiments.hasStopSign
+import tools.aqua.stars.combinatorial.testing.experiments.hasYieldSign
+import tools.aqua.stars.combinatorial.testing.experiments.isInJunction
+import tools.aqua.stars.combinatorial.testing.experiments.isOnMultiLane
+import tools.aqua.stars.combinatorial.testing.experiments.isOnSingleLane
+import tools.aqua.stars.combinatorial.testing.experiments.makesLeftTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesNoTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesRightTurn
+import tools.aqua.stars.combinatorial.testing.experiments.mustYield
+import tools.aqua.stars.combinatorial.testing.experiments.oncoming
+import tools.aqua.stars.combinatorial.testing.experiments.pedestrianCrossed
+import tools.aqua.stars.combinatorial.testing.experiments.timeDay
+import tools.aqua.stars.combinatorial.testing.experiments.timeNight
+import tools.aqua.stars.combinatorial.testing.experiments.weatherClear
+import tools.aqua.stars.combinatorial.testing.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
@@ -27,8 +48,8 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayer4() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Layer 4") {
+fun tscLayerFull() =
+    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Full") {
       all("TSCRoot") {
         exclusive("Road Type") {
           all("Junction") {
@@ -52,6 +73,12 @@ fun tscLayer4() =
                   }
                 }
               }
+            }
+
+            exclusive("Maneuver") {
+              leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
+              leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
+              leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
             }
           }
           all("Multi-Lane") {
@@ -80,6 +107,15 @@ fun tscLayer4() =
                   }
                 }
               }
+            }
+
+            exclusive("Maneuver") {
+              leaf("Lane Change") { condition { ctx -> changedLane.holds(ctx) } }
+              leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
+            }
+
+            bounded("Stop Type", 0 to 1) {
+              leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
             }
           }
           all("Single-Lane") {
@@ -110,6 +146,12 @@ fun tscLayer4() =
                 }
               }
             }
+
+            bounded("Stop Type", 0 to 1) {
+              leaf("Has Stop Sign") { condition { ctx -> hasStopSign.holds(ctx) } }
+              leaf("Has Yield Sign") { condition { ctx -> hasYieldSign.holds(ctx) } }
+              leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
+            }
           }
         }
 
@@ -117,6 +159,16 @@ fun tscLayer4() =
           leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
           leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
           leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+        }
+
+        exclusive("Weather") {
+          leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
+          leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
+        }
+
+        exclusive("Time of Day") {
+          leaf("Day") { condition { ctx -> ctx.timeNight() } }
+          leaf("Night") { condition { ctx -> ctx.timeDay() } }
         }
       }
     }

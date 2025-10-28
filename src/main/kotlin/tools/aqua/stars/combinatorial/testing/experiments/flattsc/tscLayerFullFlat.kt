@@ -15,30 +15,30 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.flattsc
+package tools.aqua.stars.combinatorial.testing.experiments.flattsc
 
-import tools.aqua.stars.carla.experiments.changedLane
-import tools.aqua.stars.carla.experiments.follows
-import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
-import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
-import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
-import tools.aqua.stars.carla.experiments.hasOvertaken
-import tools.aqua.stars.carla.experiments.hasRelevantRedLight
-import tools.aqua.stars.carla.experiments.hasStopSign
-import tools.aqua.stars.carla.experiments.hasYieldSign
-import tools.aqua.stars.carla.experiments.isInJunction
-import tools.aqua.stars.carla.experiments.isOnMultiLane
-import tools.aqua.stars.carla.experiments.isOnSingleLane
-import tools.aqua.stars.carla.experiments.makesLeftTurn
-import tools.aqua.stars.carla.experiments.makesNoTurn
-import tools.aqua.stars.carla.experiments.makesRightTurn
-import tools.aqua.stars.carla.experiments.mustYield
-import tools.aqua.stars.carla.experiments.oncoming
-import tools.aqua.stars.carla.experiments.pedestrianCrossed
-import tools.aqua.stars.carla.experiments.timeDay
-import tools.aqua.stars.carla.experiments.timeNight
-import tools.aqua.stars.carla.experiments.weatherClear
-import tools.aqua.stars.carla.experiments.weatherRain
+import tools.aqua.stars.combinatorial.testing.experiments.changedLane
+import tools.aqua.stars.combinatorial.testing.experiments.follows
+import tools.aqua.stars.combinatorial.testing.experiments.hasHighTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasLowTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasMidTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasOvertaken
+import tools.aqua.stars.combinatorial.testing.experiments.hasRelevantRedLight
+import tools.aqua.stars.combinatorial.testing.experiments.hasStopSign
+import tools.aqua.stars.combinatorial.testing.experiments.hasYieldSign
+import tools.aqua.stars.combinatorial.testing.experiments.isInJunction
+import tools.aqua.stars.combinatorial.testing.experiments.isOnMultiLane
+import tools.aqua.stars.combinatorial.testing.experiments.isOnSingleLane
+import tools.aqua.stars.combinatorial.testing.experiments.makesLeftTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesNoTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesRightTurn
+import tools.aqua.stars.combinatorial.testing.experiments.mustYield
+import tools.aqua.stars.combinatorial.testing.experiments.oncoming
+import tools.aqua.stars.combinatorial.testing.experiments.pedestrianCrossed
+import tools.aqua.stars.combinatorial.testing.experiments.timeDay
+import tools.aqua.stars.combinatorial.testing.experiments.timeNight
+import tools.aqua.stars.combinatorial.testing.experiments.weatherClear
+import tools.aqua.stars.combinatorial.testing.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*

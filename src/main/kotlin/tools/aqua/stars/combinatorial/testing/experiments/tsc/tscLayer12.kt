@@ -15,11 +15,20 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.tsc
+package tools.aqua.stars.combinatorial.testing.experiments.tsc
 
-import tools.aqua.stars.carla.experiments.*
+import tools.aqua.stars.combinatorial.testing.experiments.changedLane
+import tools.aqua.stars.combinatorial.testing.experiments.hasRelevantRedLight
+import tools.aqua.stars.combinatorial.testing.experiments.hasStopSign
+import tools.aqua.stars.combinatorial.testing.experiments.hasYieldSign
+import tools.aqua.stars.combinatorial.testing.experiments.isInJunction
+import tools.aqua.stars.combinatorial.testing.experiments.isOnMultiLane
+import tools.aqua.stars.combinatorial.testing.experiments.isOnSingleLane
+import tools.aqua.stars.combinatorial.testing.experiments.makesLeftTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesNoTurn
+import tools.aqua.stars.combinatorial.testing.experiments.makesRightTurn
 import tools.aqua.stars.core.tsc.TSC
-import tools.aqua.stars.core.tsc.builder.tsc
+import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
 
 /**
@@ -27,17 +36,19 @@ import tools.aqua.stars.data.av.dataclasses.*
  * [TickDataDifferenceSeconds] that is used in this experiment.
  */
 @Suppress("StringLiteralDuplication")
-fun tscLayerPedestrian() =
+fun tscLayer12() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "TSC Pedestrian"
+        "TSC Layer 1 & 2"
     ) {
       all("TSCRoot") {
         exclusive("Road Type") {
           all("Junction") {
             condition { ctx -> isInJunction.holds(ctx) }
 
-            optional("Dynamic Relation") {
-              leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
+            exclusive("Maneuver") {
+              leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
+              leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
+              leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
             }
           }
           all("Multi-Lane") {
@@ -49,8 +60,13 @@ fun tscLayerPedestrian() =
               )
             }
 
-            optional("Dynamic Relation") {
-              leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
+            exclusive("Maneuver") {
+              leaf("Lane Change") { condition { ctx -> changedLane.holds(ctx) } }
+              leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
+            }
+
+            bounded("Stop Type", 0 to 1) {
+              leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
             }
           }
           all("Single-Lane") {
@@ -62,20 +78,12 @@ fun tscLayerPedestrian() =
               )
             }
 
-            optional("Dynamic Relation") {
-              leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
+            bounded("Stop Type", 0 to 1) {
+              leaf("Has Stop Sign") { condition { ctx -> hasStopSign.holds(ctx) } }
+              leaf("Has Yield Sign") { condition { ctx -> hasYieldSign.holds(ctx) } }
+              leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
             }
           }
-        }
-
-        exclusive("Weather") {
-          leaf("Clear") { condition { ctx -> ctx.weatherClear() } }
-          leaf("Rain") { condition { ctx -> ctx.weatherRain() } }
-        }
-
-        exclusive("Time of Day") {
-          leaf("Day") { condition { ctx -> ctx.timeNight() } }
-          leaf("Night") { condition { ctx -> ctx.timeDay() } }
         }
       }
     }

@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package tools.aqua.stars.carla.experiments.flattsc
+package tools.aqua.stars.combinatorial.testing.experiments.flattsc
 
-import tools.aqua.stars.carla.experiments.follows
-import tools.aqua.stars.carla.experiments.hasHighTrafficDensity
-import tools.aqua.stars.carla.experiments.hasLowTrafficDensity
-import tools.aqua.stars.carla.experiments.hasMidTrafficDensity
-import tools.aqua.stars.carla.experiments.hasOvertaken
-import tools.aqua.stars.carla.experiments.isInJunction
-import tools.aqua.stars.carla.experiments.isOnMultiLane
-import tools.aqua.stars.carla.experiments.isOnSingleLane
-import tools.aqua.stars.carla.experiments.mustYield
-import tools.aqua.stars.carla.experiments.oncoming
-import tools.aqua.stars.carla.experiments.pedestrianCrossed
+import tools.aqua.stars.combinatorial.testing.experiments.follows
+import tools.aqua.stars.combinatorial.testing.experiments.hasHighTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasLowTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasMidTrafficDensity
+import tools.aqua.stars.combinatorial.testing.experiments.hasOvertaken
+import tools.aqua.stars.combinatorial.testing.experiments.isInJunction
+import tools.aqua.stars.combinatorial.testing.experiments.isOnMultiLane
+import tools.aqua.stars.combinatorial.testing.experiments.isOnSingleLane
+import tools.aqua.stars.combinatorial.testing.experiments.mustYield
+import tools.aqua.stars.combinatorial.testing.experiments.oncoming
+import tools.aqua.stars.combinatorial.testing.experiments.pedestrianCrossed
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.*
