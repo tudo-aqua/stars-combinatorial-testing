@@ -67,6 +67,12 @@ fun main() {
       )
   )
 
+  tscs.forEach { tsc ->
+    (1..6).forEach { n ->
+      println("Possible combinations for '${tsc.identifier}' for n=${n} is: ${tsc.countAllPossibleNWayPredicateCombinations(n)}")
+    }
+  }
+
   //  exitProcess(0)
 
   println("Loading simulation runs...")
@@ -75,8 +81,8 @@ fun main() {
   println("Loading segments...")
   val segments =
       loadSegments(
-          useEveryVehicleAsEgo = false,
-          useFirstVehicleAsEgo = true,
+          useEveryVehicleAsEgo = true,
+          useFirstVehicleAsEgo = false,
           minSegmentTickCount = 11,
           orderFilesBySeed = true,
           simulationRunsWrappers = simulationRunsWrappers,
@@ -86,7 +92,7 @@ fun main() {
           tscList = tscs,
           writePlots = true,
           writePlotDataCSV = true,
-          writeSerializedResults = true,
+          writeSerializedResults = false,
       )
       .apply {
         registerMetricProviders(ValidTSCInstancesPerTSCMetric())
