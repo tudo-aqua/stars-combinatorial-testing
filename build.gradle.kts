@@ -27,7 +27,7 @@ group = "tools.aqua"
 
 version = "0.5"
 
-val starsVersion = "1.0-sncs-cmbt-23-8cf60f5-SNAPSHOT"
+val starsVersion = "1.0-sncs-cmbt-27-9e34966-SNAPSHOT"
 
 repositories {
   mavenCentral()
@@ -136,4 +136,4 @@ application {
   applicationDefaultJvmArgs = listOf("-Xmx40g", "-Xms2g")
 }
 
-kotlin { jvmToolchain(21) }
+kotlin { jvmToolchain(17) }
