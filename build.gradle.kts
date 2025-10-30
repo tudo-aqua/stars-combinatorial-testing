@@ -132,7 +132,7 @@ val reproductionTestAll by
     }
 
 application {
-  mainClass.set("tools.aqua.stars.carla.experiments.ExperimentKt")
+  mainClass.set("tools.aqua.stars.combinatorial.testing.ExperimentKt")
   applicationDefaultJvmArgs = listOf("-Xmx40g", "-Xms2g")
 }
 
