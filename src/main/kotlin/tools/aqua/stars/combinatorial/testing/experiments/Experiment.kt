@@ -69,7 +69,9 @@ fun main() {
 
   tscs.forEach { tsc ->
     (1..6).forEach { n ->
-      println("Possible combinations for '${tsc.identifier}' for n=${n} is: ${tsc.countAllPossibleNWayPredicateCombinations(n)}")
+      println(
+          "Possible combinations for '${tsc.identifier}' for n=${n} is: ${tsc.countAllPossibleNWayPredicateCombinations(n)}"
+      )
     }
   }
 

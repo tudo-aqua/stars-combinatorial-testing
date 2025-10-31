@@ -54,29 +54,13 @@ fun tscLayer124Flat() =
     ) {
       optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("Pedestrian Crossed in Junction") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
-        leaf("Pedestrian Crossed on Multi-Lane") {
-          condition { ctx -> pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Single-Lane") {
-          condition { ctx -> pedestrianCrossed.holds(ctx) }
-        }
+        leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
         leaf("Must Yield") {
           condition { ctx ->
             ctx.entityIds.any { otherVehicleId -> mustYield.holds(ctx, entityId2 = otherVehicleId) }
           }
         }
-        leaf("Following Leading Vehicle in Junction") {
-          condition { ctx ->
-            ctx.entityIds.any { otherVehicleId -> follows.holds(ctx, entityId2 = otherVehicleId) }
-          }
-        }
-        leaf("Following Leading Vehicle on Single-Lane") {
-          condition { ctx ->
-            ctx.entityIds.any { otherVehicleId -> follows.holds(ctx, entityId2 = otherVehicleId) }
-          }
-        }
-        leaf("Following Leading Vehicle on Multi-Lane") {
+        leaf("Following Leading Vehicle") {
           condition { ctx ->
             ctx.entityIds.any { otherVehicleId -> follows.holds(ctx, entityId2 = otherVehicleId) }
           }

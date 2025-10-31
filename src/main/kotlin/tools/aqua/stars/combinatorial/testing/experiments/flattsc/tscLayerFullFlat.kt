@@ -52,14 +52,8 @@ fun tscLayerFullFlat() =
     tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Full Flat") {
       optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("Pedestrian Crossed in Junction") {
+        leaf("Pedestrian Crossed") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Multi-Lane") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Single-Lane") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
         }
         leaf("Must Yield") {
           condition { ctx ->
@@ -69,25 +63,9 @@ fun tscLayerFullFlat() =
                 }
           }
         }
-        leaf("Following Leading Vehicle in Junction") {
+        leaf("Following Leading Vehicle") {
           condition { ctx ->
             isInJunction.holds(ctx) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  follows.holds(ctx, entityId2 = otherVehicleId)
-                }
-          }
-        }
-        leaf("Following Leading Vehicle on Single-Lane") {
-          condition { ctx ->
-            isOnSingleLane.holds(ctx) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  follows.holds(ctx, entityId2 = otherVehicleId)
-                }
-          }
-        }
-        leaf("Following Leading Vehicle on Multi-Lane") {
-          condition { ctx ->
-            isOnMultiLane.holds(ctx) &&
                 ctx.entityIds.any { otherVehicleId ->
                   follows.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -101,17 +79,9 @@ fun tscLayerFullFlat() =
           condition { ctx -> isInJunction.holds(ctx) && makesLeftTurn.holds(ctx) }
         }
         leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
-        leaf("Oncoming traffic on Multi-Lane") {
+        leaf("Oncoming traffic") {
           condition { ctx ->
             isOnMultiLane.holds(ctx) &&
-                ctx.entityIds.any { otherVehicleId ->
-                  oncoming.holds(ctx, entityId2 = otherVehicleId)
-                }
-          }
-        }
-        leaf("Oncoming traffic on Single-Lane") {
-          condition { ctx ->
-            isOnSingleLane.holds(ctx) &&
                 ctx.entityIds.any { otherVehicleId ->
                   oncoming.holds(ctx, entityId2 = otherVehicleId)
                 }
@@ -126,11 +96,8 @@ fun tscLayerFullFlat() =
         leaf("Lane Follow") {
           condition { ctx -> isOnMultiLane.holds(ctx) && !changedLane.holds(ctx) }
         }
-        leaf("Has Red Light on Multi-Lane") {
+        leaf("Has Red Light") {
           condition { ctx -> isOnMultiLane.holds(ctx) && hasRelevantRedLight.holds(ctx) }
-        }
-        leaf("Has Red Light on Single-Lane") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && hasRelevantRedLight.holds(ctx) }
         }
         leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
         leaf("Has Stop Sign") {

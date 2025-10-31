@@ -40,14 +40,8 @@ fun tscLayerPedestrianFlat() =
     ) {
       optional("TSCRoot") {
         leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("Pedestrian Crossed in Junction") {
+        leaf("Pedestrian Crossed") {
           condition { ctx -> isInJunction.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Multi-Lane") {
-          condition { ctx -> isOnMultiLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
-        }
-        leaf("Pedestrian Crossed on Single-Lane") {
-          condition { ctx -> isOnSingleLane.holds(ctx) && pedestrianCrossed.holds(ctx) }
         }
         leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
         leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
