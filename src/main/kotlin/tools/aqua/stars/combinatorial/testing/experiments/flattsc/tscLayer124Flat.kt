@@ -35,6 +35,10 @@ import tools.aqua.stars.combinatorial.testing.experiments.makesRightTurn
 import tools.aqua.stars.combinatorial.testing.experiments.mustYield
 import tools.aqua.stars.combinatorial.testing.experiments.oncoming
 import tools.aqua.stars.combinatorial.testing.experiments.pedestrianCrossed
+import tools.aqua.stars.combinatorial.testing.experiments.timeDay
+import tools.aqua.stars.combinatorial.testing.experiments.timeNight
+import tools.aqua.stars.combinatorial.testing.experiments.weatherClear
+import tools.aqua.stars.combinatorial.testing.experiments.weatherRain
 import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.core.tsc.builder.*
 import tools.aqua.stars.data.av.dataclasses.Actor
@@ -49,40 +53,78 @@ import tools.aqua.stars.data.av.dataclasses.TickDataUnitSeconds
  */
 @Suppress("StringLiteralDuplication")
 fun tscLayer124Flat() =
-    tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>(
-        "TSC Layer 1 & 2 & 4 Flat"
-    ) {
-      optional("TSCRoot") {
-        leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
-        leaf("Pedestrian Crossed") { condition { ctx -> pedestrianCrossed.holds(ctx) } }
-        leaf("Must Yield") {
-          condition { ctx ->
-            ctx.entityIds.any { otherVehicleId -> mustYield.holds(ctx, entityId2 = otherVehicleId) }
+  tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>("TSC Layer 1 & 2 & 4 Flat") {
+    optional("TSCRoot") {
+      leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
+      leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
+      leaf("Junction") { condition { ctx -> isInJunction.holds(ctx) } }
+
+
+      leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
+      leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
+      leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+
+
+      leaf("Has Red Light") {
+        condition { ctx -> (isOnMultiLane.holds(ctx) || isOnSingleLane.holds(ctx)) && hasRelevantRedLight.holds(ctx) }
+      }
+
+
+      leaf("Lane Change") {
+        condition { ctx -> isOnMultiLane.holds(ctx) && changedLane.holds(ctx) }
+      }
+      leaf("Lane Follow") {
+        condition { ctx -> isOnMultiLane.holds(ctx) && !changedLane.holds(ctx) }
+      }
+
+      leaf("Following Leading Vehicle") {
+        condition { ctx ->
+          ctx.entityIds.any { otherVehicleId ->
+            follows.holds(ctx, entityId2 = otherVehicleId)
           }
         }
-        leaf("Following Leading Vehicle") {
-          condition { ctx ->
-            ctx.entityIds.any { otherVehicleId -> follows.holds(ctx, entityId2 = otherVehicleId) }
-          }
+      }
+
+      leaf("Oncoming traffic") {
+        condition { ctx ->
+          (isOnMultiLane.holds(ctx) || isOnSingleLane.holds(ctx)) &&
+              ctx.entityIds.any { otherVehicleId ->
+                oncoming.holds(ctx, entityId2 = otherVehicleId)
+              }
         }
-        leaf("No Turn") { condition { ctx -> makesNoTurn.holds(ctx) } }
-        leaf("Right Turn") { condition { ctx -> makesRightTurn.holds(ctx) } }
-        leaf("Left Turn") { condition { ctx -> makesLeftTurn.holds(ctx) } }
-        leaf("Multi-Lane") { condition { ctx -> isOnMultiLane.holds(ctx) } }
-        leaf("Oncoming traffic") {
-          condition { ctx ->
-            ctx.entityIds.any { otherVehicleId -> oncoming.holds(ctx, entityId2 = otherVehicleId) }
-          }
+      }
+
+      leaf("Overtaking") {
+        condition { ctx -> isOnMultiLane.holds(ctx) && hasOvertaken.holds(ctx) }
+      }
+
+      leaf("Pedestrian Crossed") {
+        condition { ctx -> pedestrianCrossed.holds(ctx) }
+      }
+
+      leaf("Has Stop Sign") {
+        condition { ctx -> isOnSingleLane.holds(ctx) && hasStopSign.holds(ctx) }
+      }
+
+      leaf("Has Yield Sign") {
+        condition { ctx -> isOnSingleLane.holds(ctx) && hasYieldSign.holds(ctx) }
+      }
+
+      leaf("Must Yield") {
+        condition { ctx ->
+          isInJunction.holds(ctx) &&
+              ctx.entityIds.any { otherVehicleId ->
+                mustYield.holds(ctx, entityId2 = otherVehicleId)
+              }
         }
-        leaf("Overtaking") { condition { ctx -> hasOvertaken.holds(ctx) } }
-        leaf("Lane Change") { condition { ctx -> changedLane.holds(ctx) } }
-        leaf("Lane Follow") { condition { ctx -> !changedLane.holds(ctx) } }
-        leaf("Has Red Light") { condition { ctx -> hasRelevantRedLight.holds(ctx) } }
-        leaf("Single-Lane") { condition { ctx -> isOnSingleLane.holds(ctx) } }
-        leaf("Has Stop Sign") { condition { ctx -> hasStopSign.holds(ctx) } }
-        leaf("Has Yield Sign") { condition { ctx -> hasYieldSign.holds(ctx) } }
-        leaf("High Traffic") { condition { ctx -> hasHighTrafficDensity.holds(ctx) } }
-        leaf("Middle Traffic") { condition { ctx -> hasMidTrafficDensity.holds(ctx) } }
-        leaf("Low Traffic") { condition { ctx -> hasLowTrafficDensity.holds(ctx) } }
+      }
+
+      leaf("No Turn") { condition { ctx -> isInJunction.holds(ctx) && makesNoTurn.holds(ctx) } }
+      leaf("Right Turn") {
+        condition { ctx -> isInJunction.holds(ctx) && makesRightTurn.holds(ctx) }
+      }
+      leaf("Left Turn") {
+        condition { ctx -> isInJunction.holds(ctx) && makesLeftTurn.holds(ctx) }
       }
     }
+  }

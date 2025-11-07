@@ -167,8 +167,8 @@ fun tscLayerFull() =
         }
 
         exclusive("Time of Day") {
-          leaf("Day") { condition { ctx -> ctx.timeNight() } }
-          leaf("Night") { condition { ctx -> ctx.timeDay() } }
+          leaf("Night") { condition { ctx -> ctx.timeNight() } }
+          leaf("Day") { condition { ctx -> ctx.timeDay() } }
         }
       }
     }
