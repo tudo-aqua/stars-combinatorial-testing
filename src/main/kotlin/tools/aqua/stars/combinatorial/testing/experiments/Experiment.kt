@@ -17,6 +17,18 @@
 
 package tools.aqua.stars.combinatorial.testing.experiments
 
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer124Flat
+import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayerFullFlat
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer124
+import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayerFull
+import tools.aqua.stars.core.evaluation.TSCEvaluation
+import tools.aqua.stars.core.metrics.evaluation.InvalidTSCInstancesPerTSCMetric
+import tools.aqua.stars.core.metrics.evaluation.NWayFeatureCombinationsPerTSCMetric
+import tools.aqua.stars.core.metrics.evaluation.ValidTSCInstancesPerTSCMetric
+import tools.aqua.stars.core.tsc.TSC
+import tools.aqua.stars.data.av.dataclasses.*
+import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
+import tools.aqua.stars.importer.carla.loadSegments
 import java.io.File
 import java.net.URI
 import java.nio.file.Files
@@ -24,25 +36,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.name
-import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer124Flat
-import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer12Flat
-import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer45Flat
-import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer4Flat
-import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayerFullFlat
-import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayerPedestrianFlat
-import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer12
-import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer124
-import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer4
-import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer45
-import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayerFull
-import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayerPedestrian
-import tools.aqua.stars.core.evaluation.TSCEvaluation
-import tools.aqua.stars.core.metrics.evaluation.*
-import tools.aqua.stars.core.metrics.evaluation.NWayFeatureCombinationsPerTSCMetric
-import tools.aqua.stars.core.tsc.TSC
-import tools.aqua.stars.data.av.dataclasses.*
-import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
-import tools.aqua.stars.importer.carla.loadSegments
 
 fun main() {
   downloadAndUnzipExperimentsData()
@@ -52,17 +45,9 @@ fun main() {
 
   tscs.addAll(
     listOf(
-      tscLayer12().also { println("Size of 1+2: ${it.instanceCount}") },
       tscLayer124().also { println("Size of 1+2+4: ${it.instanceCount}") },
-      tscLayer4().also { println("Size of 4: ${it.instanceCount}") },
-      tscLayer45().also { println("Size of 4+5: ${it.instanceCount}") },
-      tscLayerPedestrian().also { println("Size of Pedestrian: ${it.instanceCount}") },
       tscLayerFull().also { println("Size of Full: ${it.instanceCount}") },
-      tscLayer12Flat().also { println("Size of 1+2 flat: ${it.instanceCount}") },
       tscLayer124Flat().also { println("Size of 1+2+4 flat: ${it.instanceCount}") },
-      tscLayer4Flat().also { println("Size of 4 flat: ${it.instanceCount}") },
-      tscLayer45Flat().also { println("Size of 4+5 flat: ${it.instanceCount}") },
-      tscLayerPedestrianFlat().also { println("Size of Pedestrian flat: ${it.instanceCount}") },
       tscLayerFullFlat().also { println("Size of Full flat: ${it.instanceCount}") },
     )
   )
