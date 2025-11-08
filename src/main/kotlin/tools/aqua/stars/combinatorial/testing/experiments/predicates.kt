@@ -379,6 +379,8 @@ val makesLeftTurn =
 
 /** [Vehicle] v made no turn. */
 val makesNoTurn =
-    predicate(Vehicle::class) { _, v -> minPrevalence(v, 0.8) { v -> v.lane.isStraight } }
+    predicate(Vehicle::class) { ctx, v ->
+      !makesRightTurn.holds(ctx, v) && !makesLeftTurn.holds(ctx, v)
+    }
 
 // endregion

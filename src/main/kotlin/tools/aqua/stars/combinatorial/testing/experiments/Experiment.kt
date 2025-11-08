@@ -17,6 +17,13 @@
 
 package tools.aqua.stars.combinatorial.testing.experiments
 
+import java.io.File
+import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.zip.ZipFile
+import kotlin.io.path.name
 import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayer124Flat
 import tools.aqua.stars.combinatorial.testing.experiments.flattsc.tscLayerFullFlat
 import tools.aqua.stars.combinatorial.testing.experiments.tsc.tscLayer124
@@ -29,33 +36,26 @@ import tools.aqua.stars.core.tsc.TSC
 import tools.aqua.stars.data.av.dataclasses.*
 import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
 import tools.aqua.stars.importer.carla.loadSegments
-import java.io.File
-import java.net.URI
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.zip.ZipFile
-import kotlin.io.path.name
 
 fun main() {
   downloadAndUnzipExperimentsData()
 
   val tscs =
-    mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
+      mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
   tscs.addAll(
-    listOf(
-      tscLayer124().also { println("Size of 1+2+4: ${it.instanceCount}") },
-      tscLayerFull().also { println("Size of Full: ${it.instanceCount}") },
-      tscLayer124Flat().also { println("Size of 1+2+4 flat: ${it.instanceCount}") },
-      tscLayerFullFlat().also { println("Size of Full flat: ${it.instanceCount}") },
-    )
+      listOf(
+          tscLayer124().also { println("Size of 1+2+4: ${it.instanceCount}") },
+          tscLayerFull().also { println("Size of Full: ${it.instanceCount}") },
+          tscLayer124Flat().also { println("Size of 1+2+4 flat: ${it.instanceCount}") },
+          tscLayerFullFlat().also { println("Size of Full flat: ${it.instanceCount}") },
+      )
   )
 
   tscs.forEach { tsc ->
     (1..25).forEach { n ->
       println(
-        "Possible combinations for '${tsc.identifier}' for n=${n} is: ${tsc.countAllPossibleNWayPredicateCombinations(n)}"
+          "Possible combinations for '${tsc.identifier}' for n=${n} is: ${tsc.countAllPossibleNWayPredicateCombinations(n)}"
       )
     }
   }
@@ -67,28 +67,25 @@ fun main() {
 
   println("Loading segments...")
   val segments =
-    loadSegments(
-      useEveryVehicleAsEgo = true,
-      useFirstVehicleAsEgo = false,
-      minSegmentTickCount = 11,
-      orderFilesBySeed = true,
-      simulationRunsWrappers = simulationRunsWrappers,
-    )
+      loadSegments(
+          useEveryVehicleAsEgo = true,
+          useFirstVehicleAsEgo = false,
+          minSegmentTickCount = 11,
+          orderFilesBySeed = true,
+          simulationRunsWrappers = simulationRunsWrappers,
+      )
 
   TSCEvaluation(
-    tscList = tscs,
-    writePlots = true,
-    writePlotDataCSV = true,
-    writeSerializedResults = false,
-  )
-    .apply {
-      registerMetricProviders(
-        ValidTSCInstancesPerTSCMetric(),
-        InvalidTSCInstancesPerTSCMetric()
+          tscList = tscs,
+          writePlots = true,
+          writePlotDataCSV = true,
+          writeSerializedResults = false,
       )
-      (1..6).forEach { registerMetricProviders(NWayFeatureCombinationsPerTSCMetric(it)) }
-      runEvaluation(segments = segments)
-    }
+      .apply {
+        registerMetricProviders(ValidTSCInstancesPerTSCMetric(), InvalidTSCInstancesPerTSCMetric())
+        (1..6).forEach { registerMetricProviders(NWayFeatureCombinationsPerTSCMetric(it)) }
+        runEvaluation(segments = segments)
+      }
 }
 
 /**
@@ -107,9 +104,9 @@ private fun downloadAndUnzipExperimentsData() {
   if (!File(reproductionSourceZipFile).exists()) {
     println("Start with downloading the experiments data. This may take a while.")
     URI("https://zenodo.org/record/8131947/files/stars-reproduction-source.zip?download=1")
-      .toURL()
-      .openStream()
-      .use { Files.copy(it, Paths.get(reproductionSourceZipFile)) }
+        .toURL()
+        .openStream()
+        .use { Files.copy(it, Paths.get(reproductionSourceZipFile)) }
   }
 
   check(File(reproductionSourceZipFile).exists()) {
@@ -126,34 +123,34 @@ private fun downloadAndUnzipExperimentsData() {
 }
 
 private fun getSimulationRuns(): List<CarlaSimulationRunsWrapper> =
-  File("./stars-reproduction-source/stars-experiments-data/simulation_runs").let { file ->
-    file
-      .walk()
-      .filter { it.isDirectory && it != file }
-      .toList()
-      .mapNotNull { mapFolder ->
-        var staticFile: Path? = null
-        val dynamicFiles = mutableListOf<Path>()
-        mapFolder.walk().forEach { mapFile ->
-          if (mapFile.nameWithoutExtension.contains("static_data")) {
-            staticFile = mapFile.toPath()
-          }
-          if (mapFile.nameWithoutExtension.contains("dynamic_data")) {
-            dynamicFiles.add(mapFile.toPath())
-          }
-        }
+    File("./stars-reproduction-source/stars-experiments-data/simulation_runs").let { file ->
+      file
+          .walk()
+          .filter { it.isDirectory && it != file }
+          .toList()
+          .mapNotNull { mapFolder ->
+            var staticFile: Path? = null
+            val dynamicFiles = mutableListOf<Path>()
+            mapFolder.walk().forEach { mapFile ->
+              if (mapFile.nameWithoutExtension.contains("static_data")) {
+                staticFile = mapFile.toPath()
+              }
+              if (mapFile.nameWithoutExtension.contains("dynamic_data")) {
+                dynamicFiles.add(mapFile.toPath())
+              }
+            }
 
-        if (staticFile == null || dynamicFiles.isEmpty()) {
-          return@mapNotNull null
-        }
+            if (staticFile == null || dynamicFiles.isEmpty()) {
+              return@mapNotNull null
+            }
 
-        dynamicFiles.sortBy {
-          "_seed([0-9]{1,4})".toRegex().find(it.fileName.name)?.groups?.get(1)?.value?.toInt()
-            ?: 0
-        }
-        return@mapNotNull CarlaSimulationRunsWrapper(staticFile, dynamicFiles)
-      }
-  }
+            dynamicFiles.sortBy {
+              "_seed([0-9]{1,4})".toRegex().find(it.fileName.name)?.groups?.get(1)?.value?.toInt()
+                  ?: 0
+            }
+            return@mapNotNull CarlaSimulationRunsWrapper(staticFile, dynamicFiles)
+          }
+    }
 
 /**
  * Extract a zip file into any directory.
@@ -169,10 +166,10 @@ private fun extractZipFile(zipFile: File, outputDir: File): File {
       zip.getInputStream(entry).use { input ->
         if (entry.isDirectory) File(outputDir, entry.name).also { it.mkdirs() }
         else
-          File(outputDir, entry.name)
-            .also { it.parentFile.mkdirs() }
-            .outputStream()
-            .use { output -> input.copyTo(output) }
+            File(outputDir, entry.name)
+                .also { it.parentFile.mkdirs() }
+                .outputStream()
+                .use { output -> input.copyTo(output) }
       }
     }
   }

@@ -27,7 +27,7 @@ import tools.aqua.stars.data.av.dataclasses.TickDataUnitSeconds
 fun main() {
   val testTsc =
       tsc<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds> {
-        bounded("q_r", bounds=1 to 2) {
+        bounded("q_r", bounds = 1 to 2) {
           bounded("x", 0 to 2) {
             leaf("u") { condition { true } }
             leaf("v") { condition { true } }
