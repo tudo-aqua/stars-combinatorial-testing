@@ -25,9 +25,7 @@ plugins {
 
 group = "tools.aqua"
 
-version = "0.5"
-
-val starsVersion = "1.0-sncs-cmbt-27-9e34966-SNAPSHOT"
+version = "1.0"
 
 repositories {
   mavenCentral()
@@ -38,10 +36,10 @@ repositories {
 
 dependencies {
   testImplementation(kotlin("test"))
-  implementation(group = "tools.aqua", name = "stars-core", version = starsVersion)
-  implementation(group = "tools.aqua", name = "stars-logic-kcmftbl", version = starsVersion)
-  implementation(group = "tools.aqua", name = "stars-data-av", version = starsVersion)
-  implementation(group = "tools.aqua", name = "stars-importer-carla", version = starsVersion)
+  implementation(group = "tools.aqua", name = "stars-core")
+  implementation(group = "tools.aqua", name = "stars-logic-kcmftbl")
+  implementation(group = "tools.aqua", name = "stars-data-av")
+  implementation(group = "tools.aqua", name = "stars-importer-carla")
 }
 
 spotless {
@@ -62,74 +60,6 @@ spotless {
 }
 
 tasks.test { useJUnitPlatform() }
-
-val reproductionTest by
-    tasks.registering(JavaExec::class) {
-      group = "verification"
-      description = "Runs the reproduction test."
-      dependsOn(tasks.run.get().taskDependencies)
-
-      mainClass.set("tools.aqua.stars.carla.experiments.Experiment")
-      classpath = sourceSets.main.get().runtimeClasspath
-      jvmArgs = listOf("-Xmx64g")
-      args =
-          listOf(
-              // Configure input
-              "--input",
-              "./stars-reproduction-source/stars-experiments-data/simulation_runs",
-
-              // Set minSegmentTicks filter
-              "--minSegmentTicks",
-              "11",
-
-              // Sort seeds
-              "--sorted",
-
-              // Save results
-              "--saveResults",
-
-              // Run reproduction mode
-              "--reproduction",
-              "baseline",
-          )
-    }
-
-val reproductionTestAll by
-    tasks.registering(JavaExec::class) {
-      group = "verification"
-      description = "Runs the reproduction test."
-      dependsOn(tasks.run.get().taskDependencies)
-
-      mainClass.set("tools.aqua.stars.carla.experiments.Experiment")
-      classpath = sourceSets.main.get().runtimeClasspath
-      jvmArgs = listOf("-Xmx64g")
-      args =
-          listOf(
-              // Configure input
-              "--input",
-              "./stars-reproduction-source/stars-experiments-data/simulation_runs",
-
-              // Set minSegmentTicks filter
-              "--minSegmentTicks",
-              "11",
-
-              // Set allEgo
-              "--allEgo",
-
-              // Sort seeds
-              "--sorted",
-
-              // Save results
-              "--saveResults",
-
-              // Run reproduction mode
-              "--reproduction",
-              "baseline-all",
-
-              // Show memory usage
-              "--showMemoryConsumption",
-          )
-    }
 
 application {
   mainClass.set("tools.aqua.stars.combinatorial.testing.experiments.ExperimentKt")

@@ -38,8 +38,6 @@ import tools.aqua.stars.importer.carla.CarlaSimulationRunsWrapper
 import tools.aqua.stars.importer.carla.loadSegments
 
 fun main() {
-  downloadAndUnzipExperimentsData()
-
   val tscs =
       mutableListOf<TSC<Actor, TickData, Segment, TickDataUnitSeconds, TickDataDifferenceSeconds>>()
 
@@ -59,8 +57,6 @@ fun main() {
       )
     }
   }
-
-  //  exitProcess(0)
 
   println("Loading simulation runs...")
   val simulationRunsWrappers = getSimulationRuns()
@@ -88,42 +84,8 @@ fun main() {
       }
 }
 
-/**
- * Checks if the experiments data is available. Otherwise, it is downloaded and extracted to the
- * correct folder.
- */
-private fun downloadAndUnzipExperimentsData() {
-  val reproductionSourceFolderName = "stars-reproduction-source"
-  val reproductionSourceZipFile = "$reproductionSourceFolderName.zip"
-
-  if (File(reproductionSourceFolderName).exists()) {
-    println("The 'stars-reproduction-source' already exists")
-    return
-  }
-
-  if (!File(reproductionSourceZipFile).exists()) {
-    println("Start with downloading the experiments data. This may take a while.")
-    URI("https://zenodo.org/record/8131947/files/stars-reproduction-source.zip?download=1")
-        .toURL()
-        .openStream()
-        .use { Files.copy(it, Paths.get(reproductionSourceZipFile)) }
-  }
-
-  check(File(reproductionSourceZipFile).exists()) {
-    "After downloading the file '$reproductionSourceZipFile' does not exist."
-  }
-
-  println("Extracting experiments data from zip file.")
-  extractZipFile(zipFile = File(reproductionSourceZipFile), outputDir = File("."))
-
-  check(File(reproductionSourceFolderName).exists()) { "Error unzipping simulation data." }
-  check(File("./$reproductionSourceFolderName").totalSpace > 0) {
-    "There was an error while downloading/extracting the simulation data. The test zip file is missing."
-  }
-}
-
 private fun getSimulationRuns(): List<CarlaSimulationRunsWrapper> =
-    File("./stars-reproduction-source/stars-experiments-data/simulation_runs").let { file ->
+    File("./stars-experiments-data/simulation_runs").let { file ->
       file
           .walk()
           .filter { it.isDirectory && it != file }
@@ -151,27 +113,3 @@ private fun getSimulationRuns(): List<CarlaSimulationRunsWrapper> =
             return@mapNotNull CarlaSimulationRunsWrapper(staticFile, dynamicFiles)
           }
     }
-
-/**
- * Extract a zip file into any directory.
- *
- * @param zipFile src zip file
- * @param outputDir directory to extract into. There will be new folder with the zip's name inside
- *   [outputDir] directory.
- * @return the extracted directory i.e.
- */
-private fun extractZipFile(zipFile: File, outputDir: File): File {
-  ZipFile(zipFile).use { zip ->
-    zip.entries().asSequence().forEach { entry ->
-      zip.getInputStream(entry).use { input ->
-        if (entry.isDirectory) File(outputDir, entry.name).also { it.mkdirs() }
-        else
-            File(outputDir, entry.name)
-                .also { it.parentFile.mkdirs() }
-                .outputStream()
-                .use { output -> input.copyTo(output) }
-      }
-    }
-  }
-  return outputDir
-}
